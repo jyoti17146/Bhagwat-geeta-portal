@@ -1,0 +1,6 @@
+{
+  "name": "Gita Portal",
+  "description": "Access the timeless wisdom of the Shrimad Bhagavad Gita with translations, commentaries, Mahabharat legends, and interactive study tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
