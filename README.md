@@ -1,20 +1,27 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Bhagavad Gita Portal
 
-# Run and deploy your AI Studio app
+Gita Portal is an interactive web platform designed to bridge the gap between ancient spiritual wisdom and the fast-paced lives of modern youth and Gen Z. By moving away from complex jargon, this project focuses on presenting the teachings of the Bhagavad Gita through a clean UI and relatable, real-world interpretations.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/f46218be-3c11-4624-b014-3aa8d11b3698
+- Clean and responsive UI
+- Relatable modern interpretations 
+- Interactive frontend experience
+- Easy navigation and readability
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- HTML5
+- CSS3
+- JavaScript
 
+## Future Enhancements
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- Daily reading streaks
+- Audio integration
+- Mood-based verse suggestions
+- Social sharing features
+
+## Project Vision
+
+The 'Gita Portal' is more than just a website; it is a bridge between tradition and technology. My goal is to continue refining the user experience and adding interactive layers that make spiritual growth a seamless part of the digital lifestyle.
