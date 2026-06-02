@@ -672,7 +672,7 @@ export default function App() {
               <div className="flex flex-col items-center gap-7 w-full">
                 
                 {/* Vyasa Card */}
-                <div className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 border border-amber-200 dark:border-amber-800/60 p-6 sm:p-10 rounded-2xl shadow-sm w-full hover:border-amber-400 transition-all duration-300">
+                <div className="bg-white dark:bg-[#1b0f0a]/50 border border-amber-200 dark:border-amber-800/60 p-6 sm:p-10 rounded-2xl shadow-sm w-full hover:border-amber-400 transition-all duration-300">
                   <div className="text-center space-y-3">
                     <h3 className="font-serif text-xl sm:text-2xl text-[#8b4513] dark:text-amber-200 uppercase tracking-widest">
                       MAHARISHI VED VYASA
@@ -687,7 +687,7 @@ export default function App() {
                 </div>
 
                 {/* Ganesha Card */}
-                <div className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 border border-amber-200 dark:border-amber-800/60 p-6 sm:p-10 rounded-2xl shadow-sm w-full hover:border-amber-400 transition-all duration-300">
+                <div className="bg-white dark:bg-[#1b0f0a]/50 border border-amber-200 dark:border-amber-800/60 p-6 sm:p-10 rounded-2xl shadow-sm w-full hover:border-amber-400 transition-all duration-300">
                   <div className="text-center space-y-3">
                     <h3 className="font-serif text-xl sm:text-2xl text-[#8b4513] dark:text-amber-200 uppercase tracking-widest">
                       LORD GANESHA
@@ -721,7 +721,7 @@ export default function App() {
                 {benefitCards.map((card, idx) => (
                   <div 
                     key={idx}
-                    className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 w-[270px] shrink-0 border border-amber-200 dark:border-amber-800 p-6 rounded-2xl shadow-sm hover:border-amber-400 hover:-translate-y-2 select-none snap-center transition-all duration-300 flex flex-col items-center justify-between text-center aspect-square"
+                    className="bg-white dark:bg-[#1b0f0a]/50 w-[270px] shrink-0 border border-amber-200 dark:border-amber-800 p-6 rounded-2xl shadow-sm hover:border-amber-400 hover:-translate-y-2 select-none snap-center transition-all duration-300 flex flex-col items-center justify-between text-center aspect-square"
                   >
                     <div className="text-4xl mb-2">{card.icon}</div>
                     <h4 className="font-serif text-amber-900 dark:text-amber-200 text-base font-bold">{card.title}</h4>
@@ -753,7 +753,7 @@ export default function App() {
                 {tributeCards.map((card, idx) => (
                   <div 
                     key={idx}
-                    className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 p-8 rounded-2xl border border-amber-200 dark:border-amber-800 shadow-sm flex flex-col justify-between hover:border-amber-400 transition-all duration-300"
+                    className="bg-white dark:bg-[#1b0f0a]/50 p-8 rounded-2xl border border-amber-200 dark:border-amber-800 shadow-sm flex flex-col justify-between hover:border-amber-400 transition-all duration-300"
                   >
                     <p className="text-sm italic text-[#5d4037] dark:text-stone-200 leading-relaxed mb-6">
                       {card.quote}
@@ -832,7 +832,7 @@ export default function App() {
                   <div 
                     key={chap.num}
                     onClick={() => openChapterForStudy(chap.num)}
-                    className="chapter-box bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 border-2 border-amber-200 dark:border-amber-850 p-6 rounded-2xl cursor-pointer hover:bg-[#8b4513] dark:hover:bg-amber-900 hover:border-amber-400 hover:scale-[1.02] group transition-all duration-300 relative overflow-hidden"
+                    className="chapter-box bg-white dark:bg-[#1b0f0a]/50 border-2 border-amber-200 dark:border-amber-800 p-6 rounded-2xl cursor-pointer hover:bg-[#8b4513] dark:hover:bg-amber-900 hover:border-amber-400 hover:scale-[1.02] group transition-all duration-300 relative overflow-hidden"
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#8b4513] dark:bg-amber-700 group-hover:bg-[#ffd700]" />
                     <div className="flex justify-between text-xs text-stone-500 dark:text-stone-400 group-hover:text-amber-300 font-semibold">
@@ -873,7 +873,7 @@ export default function App() {
                   <div 
                     key={idx}
                     onClick={() => openChapterForStudy(vItem.chapter)}
-                    className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 rounded-2xl border-2 border-amber-200 dark:border-amber-805 p-6 flex flex-col justify-between hover:border-amber-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer shadow-sm group"
+                    className="bg-white dark:bg-[#1b0f0a]/50 rounded-2xl border-2 border-amber-200 dark:border-amber-800 p-6 flex flex-col justify-between hover:border-amber-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer shadow-sm group"
                   >
                     <div>
                       <span className="inline-block px-3 py-1 text-[10px] uppercase font-bold tracking-wider rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 mb-4">
@@ -917,7 +917,7 @@ export default function App() {
                 ].map((item, idx) => (
                   <div 
                     key={idx}
-                    className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border border-amber-200 dark:border-amber-800 flex flex-col justify-between"
+                    className="bg-white dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border border-amber-200 dark:border-amber-800 flex flex-col justify-between"
                   >
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
@@ -953,7 +953,7 @@ export default function App() {
                     href={p.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800 shadow-sm hover:border-amber-400 hover:scale-[1.03] transition-all flex flex-col justify-between gap-4 group"
+                    className="bg-white dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800 shadow-sm hover:border-amber-400 hover:scale-[1.03] transition-all flex flex-col justify-between gap-4 group"
                   >
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
@@ -988,7 +988,7 @@ export default function App() {
                 {bookCards.map((b, idx) => (
                   <div 
                     key={idx}
-                    className="bg-[#fbf9f4] dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800 flex gap-4 items-start shadow-xs hover:shadow-md transition-all duration-300"
+                    className="bg-white dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800 flex gap-4 items-start shadow-xs hover:shadow-md transition-all duration-300"
                   >
                     <div className="text-4xl px-4 py-6 bg-stone-100 dark:bg-stone-900 rounded-xl border-l-[6px] border-[#8b4513] shadow-inner select-none flex items-center justify-center shrink-0">
                       {b.cover}
@@ -1033,7 +1033,7 @@ export default function App() {
                   >
                     <button 
                       onClick={() => setActiveFaqIndex(activeFaqIndex === idx ? null : idx)}
-                      className="w-full text-left p-5 bg-[#fbf9f4] dark:bg-[#26160f] flex justify-between items-center font-bold text-[#8b4513] dark:text-amber-300 font-serif focus:outline-none cursor-pointer hover:bg-stone-50"
+                      className="w-full text-left p-5 bg-white dark:bg-[#26160f] flex justify-between items-center font-bold text-[#8b4513] dark:text-amber-300 font-serif focus:outline-none cursor-pointer hover:bg-stone-100"
                     >
                       <span>{faq.question}</span>
                       <ChevronDown className={`w-5 h-5 text-amber-600 dark:text-amber-400 transition-transform duration-250 ${activeFaqIndex === idx ? "rotate-180" : ""}`} />
@@ -1080,7 +1080,7 @@ export default function App() {
               <div className="w-full max-w-4xl h-[90vh] bg-white dark:bg-[#1b0f0a] rounded-2xl border-2 border-[#d4af37] dark:border-amber-400 overflow-hidden flex flex-col shadow-2xl relative">
                 
                 {/* Header with escape actions */}
-                <div className="p-5 border-b border-stone-200 dark:border-stone-800 bg-[#fffdf5] dark:bg-[#2c1b12]/60 flex items-center justify-between">
+                <div className="p-5 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-[#2c1b12]/60 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="p-2 bg-amber-100 dark:bg-amber-950 rounded-lg">
                       <BookOpen className="w-5 h-5 text-amber-700 dark:text-amber-400" />
@@ -1098,10 +1098,10 @@ export default function App() {
                 </div>
 
                 {/* Main Scrollable Wisdom Area */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-[#fdfaf0] dark:bg-[#1b0f0a] scroll-smooth">
+                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-white dark:bg-[#1b0f0a] scroll-smooth">
                   
                   {/* Active Shlok Devanagari Hero card */}
-                  <div className="bg-[#fffdf5] dark:bg-[#2c1b12]/40 rounded-2xl border border-[#e0d5c0] dark:border-amber-700/40 p-8 text-center max-w-3xl mx-auto shadow-sm">
+                  <div className="bg-white dark:bg-[#2c1b12]/40 rounded-2xl border border-[#e0d5c0] dark:border-amber-700/40 p-8 text-center max-w-3xl mx-auto shadow-sm">
                     <div className="text-xl text-amber-600 dark:text-amber-400 mb-2">✨</div>
                     <p className="sanskrit-holy-text text-amber-900 dark:text-[#ffd700] text-3xl font-extrabold whitespace-pre-line tracking-wider leading-relaxed">
                       {activeStudyVerses[activeVerseIndex].sanskrit}
@@ -1175,10 +1175,10 @@ export default function App() {
           {/* ================================================== */}
           {legendsPortalOpen && activeLegendIndex !== null && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
-              <div className="w-full max-w-5xl h-[92vh] bg-[#fffcf5] dark:bg-[#1b0f0a] rounded-2xl border-2 border-[#d4af37] overflow-hidden flex flex-col shadow-2xl relative">
+              <div className="w-full max-w-5xl h-[92vh] bg-white dark:bg-[#1b0f0a] rounded-2xl border-2 border-[#d4af37] overflow-hidden flex flex-col shadow-2xl relative">
                 
                 {/* Header */}
-                <div className="p-4 bg-[#fff9e6] dark:bg-[#26160f] border-b-2 border-[#deb887] dark:border-amber-800 flex items-center justify-between">
+                <div className="p-4 bg-white dark:bg-[#26160f] border-b-2 border-[#deb887] dark:border-amber-800 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🏹</span>
                     <h2 className="font-serif text-[#8b4513] dark:text-[#ffd700] font-bold text-base sm:text-lg">
@@ -1197,7 +1197,7 @@ export default function App() {
                 <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                   
                   {/* Left Sidebar Menu */}
-                  <div className="w-full md:w-[280px] bg-[#fdf5e6] dark:bg-[#26160f] border-b md:border-b-0 md:border-r border-[#deb887] dark:border-amber-800 overflow-y-auto p-4 flex flex-row md:flex-col gap-2 shrink-0">
+                  <div className="w-full md:w-[280px] bg-white dark:bg-[#26160f] border-b md:border-b-0 md:border-r border-[#deb887] dark:border-amber-800 overflow-y-auto p-4 flex flex-row md:flex-col gap-2 shrink-0">
                     {mahabharatLegends.map((legend, index) => (
                       <button
                         key={index}
@@ -1215,7 +1215,7 @@ export default function App() {
                   <div className="flex-1 overflow-y-auto p-6 md:p-10 bg-white dark:bg-[#1b0f0a] flex flex-col items-center justify-start text-center">
                     
                     {/* Character avatar frame */}
-                    <div className="inline-block p-1.5 border-2 border-[#deb887] dark:border-amber-700/60 rounded-2xl bg-[#fffcf5] dark:bg-stone-900 shadow-sm max-w-[280px] mb-6">
+                    <div className="inline-block p-1.5 border-2 border-[#deb887] dark:border-amber-700/60 rounded-2xl bg-white dark:bg-stone-900 shadow-sm max-w-[280px] mb-6">
                       <img 
                         src={mahabharatLegends[activeLegendIndex].img || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80"}
                         alt={mahabharatLegends[activeLegendIndex].name}
@@ -1243,7 +1243,7 @@ export default function App() {
                 </div>
 
                 {/* Footer simple pagination */}
-                <div className="p-4 bg-[#fff9e6] dark:bg-[#26160f] border-t border-[#deb887] dark:border-amber-800 flex items-center justify-between">
+                <div className="p-4 bg-white dark:bg-[#26160f] border-t border-[#deb887] dark:border-amber-800 flex items-center justify-between">
                   <button
                     onClick={() => {
                       if (activeLegendIndex > 0) setActiveLegendIndex(activeLegendIndex - 1);
