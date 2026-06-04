@@ -82,6 +82,28 @@ export default function App() {
   const [legendsPortalOpen, setLegendsPortalOpen] = useState<boolean>(false);
   const [activeLegendIndex, setActiveLegendIndex] = useState<number | null>(null);
 
+  // Family Tree active tab ("flow" - Unified Map, "bento" - Generations list, "search" - Relation Finder)
+  const [familyTreeTab, setFamilyTreeTab] = useState<"flow" | "bento" | "search">("flow");
+  const [familyTreeSearchQuery, setFamilyTreeSearchQuery] = useState<string>("");
+
+  const getLegendImg = (charName: string): string => {
+    let query = charName.toLowerCase();
+    if (query === "yudhishthira" || query === "yudhistra") query = "yudhisthira";
+    const found = mahabharatLegends.find(l => l.name.toLowerCase() === query);
+    return found?.img || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80";
+  };
+
+  const openLegendByName = (name: string) => {
+    let query = name.toLowerCase();
+    if (query === "yudhishthira" || query === "yudhistra") query = "yudhisthira";
+    const idx = mahabharatLegends.findIndex(l => l.name.toLowerCase() === query);
+    if (idx !== -1) {
+      setActiveLegendIndex(idx);
+      setLegendsPortalOpen(true);
+      document.body.style.overflow = "hidden";
+    }
+  };
+
   // Search States
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -698,6 +720,7 @@ export default function App() {
                   { label: "🎯 Who is Gita For", id: "benefit-section" },
                   { label: "🌍 Gita Around the World", id: "global-section" },
                   { label: "🏹 Legends of Mahabharat", id: "legends-section" },
+                  { label: "🌳 Mahabharat Family Tree", id: "family-tree-section" },
                   { label: "📖 Chapters", id: "chapters-section" },
                   { label: "✨ Essential Verses", id: "verses-section" },
                   { label: "🧘 Gita in Daily Life", id: "daily-section" },
@@ -961,6 +984,807 @@ export default function App() {
                   Enter the Legends Portal &rarr;
                 </button>
               </div>
+            </div>
+          </section>
+
+          {/* ================================================== */}
+          {/* MAHABHARAT KURU DYNASTY FAMILY TREE SECTION */}
+          {/* ================================================== */}
+          <section id="family-tree-section" className="max-w-[1150px] mx-auto my-24 px-4 scroll-mt-[90px]">
+            <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 rounded-3xl p-6 sm:p-10 shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
+              
+              {/* Header block */}
+              <div className="text-center space-y-4 mb-8">
+                <span className="inline-block px-4 py-1.5 bg-amber-800 text-stone-100 rounded-full font-serif text-xs uppercase tracking-widest font-bold">
+                  Genealogy of Dharma
+                </span>
+                <h2 className="font-serif text-3xl sm:text-4xl text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-wide">
+                  The Mahabharat Family Tree
+                </h2>
+                <p className="text-stone-600 dark:text-stone-300 max-w-3xl mx-auto leading-relaxed text-xs sm:text-sm">
+                  Trace the sacred lineage of Hastinapura from the grand patriarchs down to Pandavas, Kauravas, and the continuing seed of the cosmic dynasty. Click any character card to open their detailed biography inside the <strong>Legends Portal</strong>.
+                </p>
+                
+                {/* View Switcher Tabs */}
+                <div className="flex flex-wrap justify-center gap-2 pt-4">
+                  {[
+                    { id: "flow", label: "🌳 Family Tree Diagram", icon: "💎" },
+                    { id: "bento", label: "🗂️ Generational Bento Rows", icon: "📑" },
+                    { id: "search", label: "🔍 Character Relation Finder", icon: "🔎" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setFamilyTreeTab(tab.id as any)}
+                      className={`px-4 sm:px-6 py-2 rounded-full text-xs font-semibold cursor-pointer select-none transition-all flex items-center gap-2 ${
+                        familyTreeTab === tab.id
+                          ? "bg-amber-800 text-white shadow-md border-transparent scale-102"
+                          : "bg-stone-50 dark:bg-[#150d0a] border border-amber-905/10 dark:border-amber-800/40 text-stone-700 dark:text-stone-300 hover:bg-amber-100/30"
+                      }`}
+                    >
+                      <span>{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Card Rendering Helper Injector */}
+              {(() => {
+                const renderTreeCard = (name: string, role: string, subtitle: string, highlight: boolean = false) => {
+                  return (
+                    <div 
+                      onClick={() => openLegendByName(name)}
+                      className={`w-28 sm:w-32 hover:scale-105 active:scale-95 transition-all text-center cursor-pointer shadow-xs relative group p-2 rounded-xl border flex flex-col justify-between h-[135px] shrink-0 ${
+                        highlight 
+                          ? "bg-[#fffdf9] dark:bg-amber-950/20 border-amber-500 dark:border-amber-500 text-amber-950 dark:text-amber-100" 
+                          : "bg-white dark:bg-[#1a100c] border-[#deb887]/60 dark:border-amber-900/60 text-stone-800 dark:text-stone-200"
+                      } hover:border-[#ffd700] hover:shadow-md`}
+                    >
+                      <div className="relative w-full h-12 sm:h-14 overflow-hidden rounded-lg mb-1 border border-stone-200/40 dark:border-stone-850/40">
+                        <img 
+                          src={getLegendImg(name)} 
+                          alt={name} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-center">
+                        <h5 className="font-serif text-[10px] sm:text-xs font-black text-amber-955 dark:text-amber-200 group-hover:text-amber-700 dark:group-hover:text-amber-400 capitalize transition-colors truncate">
+                          {name}
+                        </h5>
+                        <p className="text-[8px] sm:text-[9px] text-[#8b4513] dark:text-amber-400/90 font-semibold truncate leading-tight">
+                          {role}
+                        </p>
+                        <p className="text-[7px] sm:text-[8px] text-stone-400 dark:text-stone-500 truncate leading-none mt-0.5">
+                          {subtitle}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                };
+
+                const renderConnector = (label: string) => {
+                  return (
+                    <div className="flex flex-col items-center justify-center min-w-[20px] select-none text-[8px] text-[#8b4513]/60 dark:text-amber-500/50 font-serif italic font-bold">
+                      <span className="leading-none mb-0.5">❤️</span>
+                      <div className="h-0.5 w-6 bg-[#deb887]/60 dark:bg-amber-900/40 flex items-center justify-center"></div>
+                      <span className="leading-none mt-0.5">{label}</span>
+                    </div>
+                  );
+                };
+
+                // DICTIONARY OF SPATIAL RELATIONS (RELATION FINDER DATABASE)
+                const familyRelations = [
+                  {
+                    name: "Shantanu",
+                    father: "Pratipa",
+                    mother: "Sunanda",
+                    spouses: ["Ganga", "Satyavati"],
+                    children: ["Bhishma", "Chitrangada", "Vichitravirya", "7 Others"],
+                    desc: "Sovereign King of Hastinapura who set the epic wheel in motion."
+                  },
+                  {
+                    name: "Satyavati",
+                    father: "Uparichara Vasu",
+                    mother: "Adrika (Apsara)",
+                    spouses: ["Shantanu", "Parashara"],
+                    children: ["Vyasa", "Chitrangada", "Vichitravirya"],
+                    desc: "Wise queen-mother who determined the royal succession."
+                  },
+                  {
+                    name: "Ganga",
+                    father: "Jahnu",
+                    mother: "Mena",
+                    spouses: ["Shantanu"],
+                    children: ["Bhishma", "7 Others"],
+                    desc: "The celestial river goddess whose son became the ultimate protector."
+                  },
+                  {
+                    name: "Parashara",
+                    father: "Shakti",
+                    mother: "Adrishyanti",
+                    spouses: ["Satyavati"],
+                    children: ["Vyasa"],
+                    desc: "Legendary rishi who fathered Sage Vyasa."
+                  },
+                  {
+                    name: "Vyasa",
+                    father: "Parashara",
+                    mother: "Satyavati",
+                    spouses: ["Ambika", "Ambalika"],
+                    children: ["Dhritarashtra", "Pandu", "Vidura"],
+                    desc: "Sage who recorded the Mahabharata and fathered the royal lines via Niyoga."
+                  },
+                  {
+                    name: "Chitrangada",
+                    father: "Shantanu",
+                    mother: "Satyavati",
+                    spouses: [],
+                    children: [],
+                    desc: "Valiant eldest son of Shantanu, killed early by an equal-named Gandharva."
+                  },
+                  {
+                    name: "Vichitravirya",
+                    father: "Shantanu",
+                    mother: "Satyavati",
+                    spouses: ["Ambika", "Ambalika"],
+                    children: ["Dhritarashtra", "Pandu"],
+                    desc: "Hastinapura king whose early childless death led to the spiritual Niyoga invocation."
+                  },
+                  {
+                    name: "Bhishma",
+                    father: "Shantanu",
+                    mother: "Ganga",
+                    spouses: [],
+                    children: [],
+                    desc: "Hastinapura grand elder who renounced his throne and took a terrible vow of celibacy."
+                  },
+                  {
+                    name: "Ambika",
+                    father: "King of Kashi",
+                    mother: "Queen of Kashi",
+                    spouses: ["Vichitravirya", "Vyasa"],
+                    children: ["Dhritarashtra"],
+                    desc: "Kashi princess whose closed eyes during Vyasa's sight led to blind Dhritarashtra."
+                  },
+                  {
+                    name: "Ambalika",
+                    father: "King of Kashi",
+                    mother: "Queen of Kashi",
+                    spouses: ["Vichitravirya", "Vyasa"],
+                    children: ["Pandu"],
+                    desc: "Younger princess of Kashi whose pale shock led to Pandu's light complexion."
+                  },
+                  {
+                    name: "Dhritarashtra",
+                    father: "Vyasa",
+                    mother: "Ambika",
+                    spouses: ["Gandhari"],
+                    children: ["Duryodhana", "Vikarna", "Dushasana", "Duhsala"],
+                    desc: "Blind king whose sensory blind attachment to Duryodhana brought about the war."
+                  },
+                  {
+                    name: "Gandhari",
+                    father: "Subala of Gandhara",
+                    mother: "Sudharma",
+                    spouses: ["Dhritarashtra"],
+                    children: ["Duryodhana", "Vikarna", "Dushasana", "Duhsala"],
+                    desc: "Righteous queen who blindfolded herself out of ultimate devotion."
+                  },
+                  {
+                    name: "Pandu",
+                    father: "Vyasa",
+                    mother: "Ambalika",
+                    spouses: ["Kunti", "Madri"],
+                    children: ["Yudhishthira", "Bheema", "Arjuna", "Nakula", "Sahadeva"],
+                    desc: "Noble pale king who renounced kingdom to seek hermit solitude."
+                  },
+                  {
+                    name: "Kunti",
+                    father: "Shurasena",
+                    mother: "Marisha",
+                    spouses: ["Pandu", "Surya"],
+                    children: ["Karna", "Yudhishthira", "Bheema", "Arjuna"],
+                    desc: "Stately mother of the eldest Pandavas, blessed with celestial invocation mantras."
+                  },
+                  {
+                    name: "Madri",
+                    father: "Shalya's Father",
+                    mother: "Madra Queen",
+                    spouses: ["Pandu"],
+                    children: ["Nakula", "Sahadeva"],
+                    desc: "Second consort of Pandu who invoked the Twin Ashwini Physicians."
+                  },
+                  {
+                    name: "Karna",
+                    father: "Surya",
+                    mother: "Kunti",
+                    spouses: [],
+                    children: [],
+                    desc: "Tragic solar archer abandoned at birth who sided with Duryodhana out of supreme friendship."
+                  },
+                  {
+                    name: "Yudhisthira",
+                    father: "Pandu (Spiritual Dharma)",
+                    mother: "Kunti",
+                    spouses: ["Draupadi"],
+                    children: [],
+                    desc: "The Dharmaraja who championed truth and righteousness."
+                  },
+                  {
+                    name: "Bheema",
+                    father: "Pandu (Spiritual Vayu)",
+                    mother: "Kunti",
+                    spouses: ["Hidimbi", "Draupadi"],
+                    children: ["Ghatotkacha"],
+                    desc: "Undefeatable colossus who crushed Duryodhana and Dushasana in sacred oaths."
+                  },
+                  {
+                    name: "Hidimbi",
+                    father: "Forest Native",
+                    mother: "Native Mother",
+                    spouses: ["Bheema"],
+                    children: ["Ghatotkacha"],
+                    desc: "Forest native princess and wife of Bheema."
+                  },
+                  {
+                    name: "Arjuna",
+                    father: "Pandu (Spiritual Indra)",
+                    mother: "Kunti",
+                    spouses: ["Subhadra", "Draupadi"],
+                    children: ["Abhimanyu"],
+                    desc: "The supreme Gandiva archer who accepted the Gita from Lord Krishna."
+                  },
+                  {
+                    name: "Subhadra",
+                    father: "Vasudeva",
+                    mother: "Rohini",
+                    spouses: ["Arjuna"],
+                    children: ["Abhimanyu"],
+                    desc: "Loving sister of Lord Krishna and mother of Abhimanyu."
+                  },
+                  {
+                    name: "Abhimanyu",
+                    father: "Arjuna",
+                    mother: "Subhadra",
+                    spouses: ["Uttara"],
+                    children: ["Parikshit"],
+                    desc: "The youthful martyr who entered the terrifying Chakravyuha alone."
+                  },
+                  {
+                    name: "Uttara",
+                    father: "Virat of Matsya",
+                    mother: "Sudeshna",
+                    spouses: ["Abhimanyu"],
+                    children: ["Parikshit"],
+                    desc: "Princess of Matsya whose child Parikshit became the survivor of the Kuru seed."
+                  },
+                  {
+                    name: "Nakula",
+                    father: "Pandu (Spiritual Ashwini)",
+                    mother: "Madri",
+                    spouses: ["Draupadi"],
+                    children: [],
+                    desc: "Fourth Pandava, master swordsman, and animal scholar."
+                  },
+                  {
+                    name: "Sahadeva",
+                    father: "Pandu (Spiritual Ashwini)",
+                    mother: "Madri",
+                    spouses: ["Draupadi"],
+                    children: [],
+                    desc: "Youngest Pandava, all-knowing sage and astrologer of cosmic futures."
+                  },
+                  {
+                    name: "Duryodhana",
+                    father: "Dhritarashtra",
+                    mother: "Gandhari",
+                    spouses: ["Bhanumati"],
+                    children: ["Lakshman", "Lakshmana"],
+                    desc: "Chief Kaurava antagonist whose pride brought Hastinapura to its knees."
+                  },
+                  {
+                    name: "Bhanumati",
+                    father: "Chitrangada of Kalinga",
+                    mother: "Kalinga Queen",
+                    spouses: ["Duryodhana"],
+                    children: ["Lakshman", "Lakshmana"],
+                    desc: "Venerated chief queen of Duryodhana, known for her devotion and integrity."
+                  },
+                  {
+                    name: "Vikarna",
+                    father: "Dhritarashtra",
+                    mother: "Gandhari",
+                    spouses: [],
+                    children: [],
+                    desc: "The rare Kaurava who protested Draupadi's disrobing on basic dharmic principles."
+                  },
+                  {
+                    name: "Dushasana",
+                    father: "Dhritarashtra",
+                    mother: "Gandhari",
+                    spouses: [],
+                    children: [],
+                    desc: "Arrogant second Kaurava brother who dragged Draupadi in public disgrace."
+                  },
+                  {
+                    name: "Duhsala",
+                    father: "Dhritarashtra",
+                    mother: "Gandhari",
+                    spouses: ["Jayadratha"],
+                    children: [],
+                    desc: "Beloved single sister of the Kaurava army, wed to Sindhu."
+                  },
+                  {
+                    name: "Sambha",
+                    father: "Krishna",
+                    mother: "Jambavati",
+                    spouses: ["Lakshmana"],
+                    children: [],
+                    desc: "Lord Krishna's rebellious prince son who held a deep romance for Kaurava-born Lakshmana."
+                  },
+                  {
+                    name: "Lakshman",
+                    father: "Duryodhana",
+                    mother: "Bhanumati",
+                    spouses: [],
+                    children: [],
+                    desc: "Kaurava crown prince who fought bravely but fell to Abhimanyu."
+                  },
+                  {
+                    name: "Lakshmana",
+                    father: "Duryodhana",
+                    mother: "Bhanumati",
+                    spouses: ["Sambha"],
+                    children: [],
+                    desc: "Duryodhana's daughter who wed Krishna's son Sambha, merging Yadavas and Kurus."
+                  }
+                ];
+
+                // FIND CURRENT MATCH FOR SEARCH ENGINE
+                const activeRelation = familyRelations.find(item => 
+                  item.name.toLowerCase() === familyTreeSearchQuery.toLowerCase()
+                ) || familyRelations[0];
+
+                return (
+                  <>
+                    {/* TAB 1: VISUAL FAMILY TREE DIAGRAM */}
+                    {familyTreeTab === "flow" && (
+                      <div className="relative w-full overflow-x-auto pb-8 pt-4 scrollbar-thin scrollbar-thumb-amber-800 scrollbar-track-stone-100/50">
+                        <div className="min-w-[1100px] flex flex-col gap-10 items-center justify-center p-4">
+                          
+                          {/* LEVEL 1: Pre-Kuru Ancestors & Origins */}
+                          <div className="flex items-center gap-4 justify-center bg-[#fdfaf2] dark:bg-amber-950/20 p-4 rounded-3xl border border-dashed border-amber-300 dark:border-amber-900/50 shadow-xs">
+                            <div className="flex flex-col items-center">
+                              <span className="text-[9px] font-sans text-amber-800 uppercase font-bold tracking-widest mb-1">Sage</span>
+                              {renderTreeCard("Parashara", "Vedic Sage", "Author of Scriptures")}
+                            </div>
+                            
+                            {renderConnector("Spiritual")}
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[9px] font-sans text-amber-800 uppercase font-bold tracking-widest mb-1">Fisher Princess</span>
+                              {renderTreeCard("Satyavati", "Grand Mother", "Core lineage anchor", true)}
+                            </div>
+
+                            {renderConnector("Alliance")}
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[9px] font-sans text-amber-800 uppercase font-bold tracking-widest mb-1">The Sovereign</span>
+                              {renderTreeCard("Shantanu", "King of Kurus", "Hastinapura Ruler")}
+                            </div>
+
+                            {renderConnector("Divine union")}
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[9px] font-sans text-amber-800 uppercase font-bold tracking-widest mb-1">Goddess</span>
+                              {renderTreeCard("Ganga", "River Divinity", "Mother of Bhishma")}
+                            </div>
+                          </div>
+
+                          {/* Level Connectors Vertical line */}
+                          <div className="w-full h-8 flex justify-between px-16 max-w-[850px] relative">
+                            <div className="absolute left-[13%] top-0 bottom-0 border-l-2 border-dashed border-amber-500/50 flex items-end justify-center"><span className="text-amber-500 text-xs">↓</span></div>
+                            <div className="absolute left-[38%] top-0 bottom-0 border-l-2 border-dashed border-amber-500/50 flex items-end justify-center"><span className="text-amber-500 text-xs">↓</span></div>
+                            <div className="absolute left-[85%] top-0 bottom-0 border-l-2 border-dashed border-amber-500/50 flex items-end justify-center"><span className="text-amber-500 text-xs">↓</span></div>
+                          </div>
+
+                          {/* LEVEL 2: Sages & Early Heirs */}
+                          <div className="grid grid-cols-5 gap-3 w-full max-w-[1050px] items-start">
+                            <div className="flex flex-col items-center">
+                              <span className="text-[8px] bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded text-amber-900 dark:text-amber-300 font-serif mb-1">Veda Seer</span>
+                              {renderTreeCard("Vyasa", "Sage-Composer", "Compiler of Vedas")}
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[8px] bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded text-amber-900 dark:text-amber-300 font-serif mb-1">Eldest Prince</span>
+                              {renderTreeCard("Chitrangada", "Crown Successor", "Killed in Battle")}
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[8px] bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded text-amber-900 dark:text-amber-300 font-serif mb-1">Late King</span>
+                              {renderTreeCard("Vichitravirya", "The Successor", "Died of Sickness", true)}
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[8px] bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded text-amber-900 dark:text-amber-300 font-serif mb-1">Grand Patriarch</span>
+                              {renderTreeCard("Bhishma", "Grand Elder", "The Unbowed Vow")}
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <span className="text-[8px] bg-stone-100 dark:bg-stone-900 px-2 py-0.5 rounded text-stone-500 dark:text-stone-400 font-serif mb-1">Brothers</span>
+                              <div className="w-28 sm:w-32 bg-stone-50 dark:bg-[#120a07] border border-stone-200 dark:border-stone-850 rounded-xl p-2 pb-3 text-center opacity-65 shrink-0 flex flex-col justify-center items-center h-[135px]">
+                                <span className="text-xl">✨</span>
+                                <h5 className="font-serif text-[10px] sm:text-xs font-semibold text-stone-500 dark:text-stone-400 mt-2 truncate">7 Others</h5>
+                                <p className="text-[8px] text-stone-400 leading-none mt-1">Ganga's Divine Children</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* LEVEL 3: Royal Queens (Ambika / Ambalika) */}
+                          <div className="w-full text-center py-2 relative text-[10px] text-amber-800/80 dark:text-amber-400/70 italic font-serif bg-[#fdfcf7] dark:bg-amber-950/10 py-2.5 rounded-2xl border border-amber-900/10">
+                            <span>Satyavati requested Sage Vyasa for Niyoga Spirit Unions with the Childless Queens</span>
+                            <div className="w-full h-8 flex justify-around max-w-[850px] mx-auto pt-1 relative">
+                              <div className="border-l border-amber-500/40 border-r border-amber-500/40 h-full w-[45%] border-t"></div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-24 justify-center">
+                            <div className="flex items-center gap-3">
+                              {renderTreeCard("Ambika", "Kashi Eldest Princess", "Mother of Dhritarashtra")}
+                              {renderConnector("Niyoga")}
+                              <span className="text-[9px] bg-[#8b4513] text-white px-2 py-0.5 rounded italic">Vyasa</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-[9px] bg-[#8b4513] text-white px-2 py-0.5 rounded italic">Vyasa</span>
+                              {renderConnector("Niyoga")}
+                              {renderTreeCard("Ambalika", "Kashi younger princess", "Mother of Pandu")}
+                            </div>
+                          </div>
+
+                          {/* Next Down Vertical Arrow */}
+                          <div className="w-full h-8 flex justify-around px-8 max-w-[700px]">
+                            <div className="border-l-2 border-dashed border-amber-500/50 h-full flex items-end justify-center"><span className="text-amber-500 text-xs">↓</span></div>
+                            <div className="border-l-2 border-dashed border-amber-500/50 h-full flex items-end justify-center"><span className="text-amber-500 text-xs">↓</span></div>
+                          </div>
+
+                          {/* LEVEL 4: The Royal Households (Dhritarashtra vs Pandavas) */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-[1100px]">
+                            
+                            {/* DHRITARASHTRA BLOCK */}
+                            <div className="bg-[#fffdfb] dark:bg-[#1a110d]/50 p-4 border border-rose-950/15 dark:border-amber-900/40 rounded-3xl flex flex-col items-center shadow-xs">
+                              <h4 className="text-xs font-serif font-black tracking-widest text-[#8b4513] dark:text-amber-300 mb-3 border-b border-amber-900/10 pb-1">⚔️ HOUSE OF DHRITARASHTRA (KAURAVAS)</h4>
+                              
+                              <div className="flex items-center gap-2">
+                                {renderTreeCard("Dhritarashtra", "The Blind Sovereign", "Father of the Kauravas")}
+                                {renderConnector("Marriage")}
+                                {renderTreeCard("Gandhari", "Empress Mother", "Devout blindfolded Queen")}
+                              </div>
+                              
+                              <div className="h-6 border-l-2 border-amber-500/55 my-2 flex items-end"><span className="text-amber-500 text-[9px]">↓</span></div>
+                              
+                              {/* Children Grid */}
+                              <div className="flex flex-wrap gap-2 justify-center">
+                                {renderTreeCard("Duryodhana", "Chief Kaurava", "Eldest ambitious son", true)}
+                                {renderTreeCard("Vikarna", "The Just Son", "Defended Draupadi")}
+                                {renderTreeCard("Dushasana", "Second Kaurava", "Arrogant general")}
+                                {renderTreeCard("Duhsala", "Beloved Sister", "Hastinapura princess")}
+                                <div className="w-24 bg-stone-50 dark:bg-[#120a07] border border-stone-200 dark:border-stone-850 rounded-xl p-2 text-center opacity-65 shrink-0 flex flex-col justify-center items-center h-[135px]">
+                                  <span className="text-xl">🤝</span>
+                                  <span className="font-serif text-[10px] font-black text-stone-500 mt-1">96 Others</span>
+                                  <span className="text-[7.5px] text-stone-400 mt-0.5">Kaurava Prince heirs</span>
+                                </div>
+                              </div>
+
+                              <div className="h-6 border-l-2 border-dashed border-amber-500/50 my-2"></div>
+                              
+                              {/* Duryodhana descendants */}
+                              <div className="flex items-center gap-2 py-2 px-4 bg-orange-50/20 dark:bg-amber-950/10 rounded-2xl border border-orange-200/40">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-amber-800 font-serif">Consort</span>
+                                  {renderTreeCard("Bhanumati", "Chief Queen", "Wife of Duryodhana")}
+                                </div>
+                                {renderConnector("Descendants")}
+                                <div className="flex gap-2">
+                                  {renderTreeCard("Lakshman", "Valiant Prince", "Fell to Abhimanyu")}
+                                  {renderTreeCard("Lakshmana", "Kaurava Princess", "Wed to Krishna's son")}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* PANDU BLOCK */}
+                            <div className="bg-[#fffdfb] dark:bg-[#1a110d]/50 p-4 border border-amber-950/15 dark:border-amber-900/40 rounded-3xl flex flex-col items-center shadow-xs">
+                              <h4 className="text-xs font-serif font-black tracking-widest text-[#8b4513] dark:text-amber-300 mb-3 border-b border-amber-900/10 pb-1">🌤️ HOUSE OF PANDU (THE FIVE PANDAVAS)</h4>
+                              
+                              <div className="flex items-center gap-2 flex-wrap justify-center">
+                                {renderTreeCard("Kunti", "Dharmic Empress", "Mother of core Pandavas")}
+                                {renderConnector("First Wife")}
+                                {renderTreeCard("Pandu", "Hermit King", "The Sovereign recluse")}
+                                {renderConnector("Second Wife")}
+                                {renderTreeCard("Madri", "Second Consort", "Mother of Twin Princes")}
+                              </div>
+
+                              <div className="w-full flex justify-between gap-4 border-t border-dashed border-amber-200 dark:border-amber-900/45 pt-3 mt-3">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[8px] bg-orange-100 dark:bg-orange-950/40 px-2 py-0.5 rounded text-orange-900 font-bold mb-1.5">Born to Kunti from Surya</span>
+                                  {renderTreeCard("Karna", "Radiant Archer", "Abandoned Warrior-King")}
+                                </div>
+                                <div className="flex-1 flex flex-col items-center justify-end">
+                                  <span className="text-[9px] text-amber-500 text-center font-bold">Divine Descendants via Invocation ↓</span>
+                                </div>
+                              </div>
+
+                              {/* Pandava Brothers Grid */}
+                              <div className="flex flex-wrap gap-2 justify-center mt-3">
+                                {renderTreeCard("Yudhisthira", "Elder Dharmaraja", "Eldest truthful King")}
+                                {renderTreeCard("Bheema", "The Unrelent", "Fierce second brother", true)}
+                                {renderTreeCard("Arjuna", "Master Archer", "Hero of the Gita", true)}
+                                {renderTreeCard("Nakula", "The Sword-master", "Handsome elder twin")}
+                                {renderTreeCard("Sahadeva", "The Seer-Twin", "Astrologer youngest twin")}
+                              </div>
+
+                              <div className="w-full border-t border-dashed border-amber-200 dark:border-amber-900/45 pt-3 mt-4 flex justify-around">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-amber-800 font-serif mb-1">Mated</span>
+                                  {renderTreeCard("Hidimbi", "Native Queen", "Wife of mighty Bheema")}
+                                </div>
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-amber-800 font-serif mb-1">Yadava Link</span>
+                                  {renderTreeCard("Subhadra", "Yadava Princess", "Krishna's Beloved Sister")}
+                                </div>
+                              </div>
+
+                              {/* Next Gen seeds of Pandavas */}
+                              <div className="w-full flex justify-around pt-3 border-t border-amber-300/10 mt-3 bg-amber-50/10 p-2 rounded-2xl">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-amber-600 font-serif">Bheema's Son</span>
+                                  <div className="w-24 bg-stone-50 dark:bg-[#120a07] border border-amber-900/10 rounded-xl p-1.5 text-center shrink-0 h-[115px] flex flex-col justify-center items-center">
+                                    <span className="text-xl">👹</span>
+                                    <h5 className="font-serif text-[10px] font-black text-stone-500 mt-1">Ghatotkacha</h5>
+                                    <p className="text-[8.5px] text-stone-400 mt-0.5">Generous Martyr</p>
+                                  </div>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-amber-600 font-serif">Arjuna's Heirs</span>
+                                  {renderTreeCard("Abhimanyu", "Valiant Martyr", "Aged eighteen warrior", true)}
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          {/* LEVEL 5: Continuing Matrimony & Cosmic Integration */}
+                          <div className="bg-[#fffdf7] dark:bg-[#170e0a]/80 border border-amber-300 dark:border-amber-800 p-5 rounded-3xl w-full max-w-[950px] shadow-sm">
+                            <h4 className="text-xs font-serif font-black tracking-widest text-[#8b4513] dark:text-amber-300 mb-4 uppercase text-center tracking-[2px]">🔮 UNIFYING CONTRACTS OF THE NEXT WORLD</h4>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                              
+                              {/* Alliance 1 */}
+                              <div className="flex flex-col items-center border-b md:border-b-0 md:border-r border-[#deb887]/30 pb-4 md:pb-0 md:pr-4">
+                                <span className="text-[9px] text-[#8b4513] dark:text-amber-400 font-serif italic mb-2">The Peace Marriage alliance across the factions</span>
+                                <div className="flex items-center gap-2">
+                                  {renderTreeCard("Lakshmana", "Duryodhana's child", "Kaurava Royal Princes")}
+                                  {renderConnector("Wedded")}
+                                  {renderTreeCard("Sambha", "Shri Krishna's boy", "Dwarka Yadava Prince")}
+                                </div>
+                              </div>
+
+                              {/* Alliance 2 */}
+                              <div className="flex flex-col items-center md:pl-4">
+                                <span className="text-[9px] text-[#8b4513] dark:text-amber-400 font-serif italic mb-2">The Continuation Line of the Dynasty Crown</span>
+                                <div className="flex items-center gap-2 mb-2">
+                                  {renderTreeCard("Abhimanyu", "Arjuna's Prince", "Young Hero-Martyr")}
+                                  {renderConnector("Wedded")}
+                                  {renderTreeCard("Uttara", "Matsya Princess", "Daughter of King Virat")}
+                                </div>
+                                <div className="h-5 border-l-2 border-dashed border-[#8b4513] my-1"></div>
+                                <div className="bg-amber-50 dark:bg-amber-950/30 p-2.5 rounded-xl border border-double border-amber-600 w-full max-w-[240px] text-center shadow-2xs">
+                                  <span className="text-[#8b4513] dark:text-amber-300 text-xs font-black uppercase tracking-wider block">👑 KING PARIKSHIT</span>
+                                  <span className="text-[8.5px] text-stone-500 dark:text-stone-400 leading-none">Holy descendant who rebuilt Hastinapura and preserved the dharmic seeds.</span>
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 2: GENERATIONAL BENTO CLUSTERS */}
+                    {familyTreeTab === "bento" && (
+                      <div className="space-y-6 pt-2">
+                        {[
+                          {
+                            title: "Generation I: Ancient Ancestors & Sacred Founders",
+                            desc: "The celestial foundational beings whose unions initiated the Hastinapura crown dynasty story.",
+                            members: ["Parashara", "Satyavati", "Shantanu", "Ganga"]
+                          },
+                          {
+                            title: "Generation II: The Sages, Grand Protector & Heirs",
+                            desc: "Princes and scribes who shaped the laws, morals, and preserved the royal seed during early dynastic crises.",
+                            members: ["Vyasa", "Chitrangada", "Vichitravirya", "Bhishma"]
+                          },
+                          {
+                            title: "Generation III: Queens, Regents & Sovereigns",
+                            desc: "Empresses and blind or pale kings who held the crown in tension before the epic war.",
+                            members: ["Ambika", "Ambalika", "Dhritarashtra", "Gandhari", "Pandu", "Kunti", "Madri"]
+                          },
+                          {
+                            title: "Generation IV: Heroes & Antagonists of Kurukshetra",
+                            desc: "The major battlefield contestants, archers, and spouses whose actions took Hastinapura to Kurukshetra.",
+                            members: ["Karna", "Duryodhana", "Bhanumati", "Vikarna", "Dushasana", "Duhsala", "Yudhisthira", "Bheema", "Arjuna", "Hidimbi", "Subhadra", "Nakula", "Sahadeva"]
+                          },
+                          {
+                            title: "Generation V: The Seeds, Allies & Future Crown Heirs",
+                            desc: "Young martyrs and loving alliance seekers who carried the surviving seed of humanity across the war.",
+                            members: ["Abhimanyu", "Uttara", "Lakshman", "Lakshmana", "Sambha"]
+                          }
+                        ].map((gen, idx) => (
+                          <div key={idx} className="bg-stone-50 dark:bg-[#1a110d]/40 p-4 sm:p-6 rounded-2xl border border-amber-900/5 dark:border-amber-900/30 flex flex-col md:flex-row gap-4 items-start">
+                            <div className="md:w-[220px] shrink-0 space-y-1">
+                              <h4 className="font-serif font-black text-amber-900 dark:text-amber-300 text-sm">{gen.title}</h4>
+                              <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-relaxed">{gen.desc}</p>
+                            </div>
+                            <div className="flex-1 flex flex-wrap gap-3">
+                              {gen.members.map(member => (
+                                <div key={member} className="hover:-translate-y-1 transition-transform">
+                                  {renderTreeCard(
+                                    member, 
+                                    member === "Vyasa" || member === "Parashara" ? "Sage" : member === "Bhishma" ? "Grand patriarch" : "Kuru Dynast",
+                                    "Click to view bio",
+                                    member === "Satyavati" || member === "Arjuna" || member === "Duryodhana"
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* TAB 3: CHARACTER RELATION REFINERY */}
+                    {familyTreeTab === "search" && (
+                      <div className="pt-2 max-w-4xl mx-auto space-y-6">
+                        
+                        {/* Search & Suggestions selector */}
+                        <div className="bg-stone-50 dark:bg-[#1a110d]/50 p-6 rounded-2xl border border-amber-900/10">
+                          <h4 className="text-xs font-serif font-black uppercase text-amber-905 dark:text-amber-300 mb-3 text-center tracking-wider">Select a Soul of Hastinapura to Map Relations</h4>
+                          <div className="flex flex-wrap gap-2 justify-center max-h-[140px] overflow-y-auto p-1 bg-white dark:bg-[#110906] rounded-xl border border-amber-950/10">
+                            {familyRelations.map((char) => (
+                              <button
+                                key={char.name}
+                                onClick={() => setFamilyTreeSearchQuery(char.name)}
+                                className={`px-2.5 py-1 text-[10px] sm:text-xs font-bold rounded-lg cursor-pointer transition-all ${
+                                  familyTreeSearchQuery.toLowerCase() === char.name.toLowerCase()
+                                    ? "bg-[#8b4513] text-white"
+                                    : "bg-amber-50 dark:bg-amber-950/20 hover:bg-amber-100 text-[#8b4513] dark:text-amber-300 border border-amber-900/5"
+                                }`}
+                              >
+                                {char.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Visual Relational Display Node Network */}
+                        <div className="bg-white dark:bg-[#1b100b] border border-amber-400/20 p-6 rounded-2xl flex flex-col md:flex-row gap-6 items-center justify-center">
+                          
+                          {/* Centered Primary character profile details */}
+                          <div className="text-center space-y-2 border-b md:border-b-0 md:border-r border-[#deb887]/30 pb-6 md:pb-0 md:pr-8 md:w-[240px] shrink-0">
+                            <span className="text-[9px] font-bold text-amber-600 uppercase tracking-widest leading-none block">SELECTED CHARACTER</span>
+                            <div className="relative w-28 h-28 mx-auto overflow-hidden rounded-full border-4 border-amber-500 shadow-md">
+                              <img 
+                                src={getLegendImg(activeRelation.name)} 
+                                alt={activeRelation.name} 
+                                className="w-full h-full object-cover"
+                                referrerPolicy="no-referrer"
+                              />
+                            </div>
+                            <h4 className="text-lg font-serif font-black text-[#5d3011] dark:text-[#ffd700] uppercase tracking-wide leading-tight">{activeRelation.name}</h4>
+                            <p className="text-[11px] text-stone-500 dark:text-stone-400 italic leading-snug">{activeRelation.desc}</p>
+                            
+                            <button
+                              onClick={() => openLegendByName(activeRelation.name)}
+                              className="px-4 py-1.5 bg-[#8b4513] text-[#ffd700] rounded-full text-[10.5px] font-bold uppercase tracking-wider block mx-auto cursor-pointer hover:bg-stone-850"
+                            >
+                              Open Portal Biography →
+                            </button>
+                          </div>
+
+                          {/* Connected kinfolk tree row arrays */}
+                          <div className="flex-1 w-full space-y-4">
+                            
+                            {/* Mother and Father */}
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
+                                <span className="text-[9px] uppercase font-bold text-stone-400 block mb-1">Father</span>
+                                {activeRelation.father && activeRelation.father !== "Pratipa" && activeRelation.father !== "Pratipa" && familyRelations.some(c => c.name.toLowerCase() === activeRelation.father.split(" ")[0].toLowerCase()) ? (
+                                  <button 
+                                    onClick={() => setFamilyTreeSearchQuery(activeRelation.father.split(" ")[0])}
+                                    className="text-xs font-serif font-black text-[#8b4513] dark:text-amber-300 hover:underline hover:opacity-80 text-left block"
+                                  >
+                                    👴 {activeRelation.father} ➜
+                                  </button>
+                                ) : (
+                                  <span className="text-xs text-stone-550 dark:text-stone-400 font-serif italic">👴 {activeRelation.father || "Unknown / Astral Form"}</span>
+                                )}
+                              </div>
+
+                              <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
+                                <span className="text-[9px] uppercase font-bold text-stone-400 block mb-1">Mother</span>
+                                {activeRelation.mother && familyRelations.some(c => c.name.toLowerCase() === activeRelation.mother.split(" ")[0].toLowerCase()) ? (
+                                  <button 
+                                    onClick={() => setFamilyTreeSearchQuery(activeRelation.mother.split(" ")[0])}
+                                    className="text-xs font-serif font-black text-[#8b4513] dark:text-amber-300 hover:underline hover:opacity-80 text-left block"
+                                  >
+                                    👵 {activeRelation.mother} ➜
+                                  </button>
+                                ) : (
+                                  <span className="text-xs text-stone-550 dark:text-stone-400 font-serif italic">👵 {activeRelation.mother || "Unknown / Astral Form"}</span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Spouses List */}
+                            <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
+                              <span className="text-[9px] uppercase font-bold text-stone-400 block mb-2">Spouse(s) / Partners</span>
+                              {activeRelation.spouses.length > 0 ? (
+                                <div className="flex flex-wrap gap-2">
+                                  {activeRelation.spouses.map((spouse) => (
+                                    <button
+                                      key={spouse}
+                                      onClick={() => {
+                                        const cleanName = spouse.split(" ")[0];
+                                        if (familyRelations.some(c => c.name.toLowerCase() === cleanName.toLowerCase())) {
+                                          setFamilyTreeSearchQuery(cleanName);
+                                        }
+                                      }}
+                                      className="px-2 py-1 bg-amber-50 dark:bg-amber-955/30 border border-amber-950/10 text-[#8b4513] dark:text-amber-250 rounded-lg text-xs font-black cursor-pointer hover:bg-amber-100"
+                                    >
+                                      ❤️ {spouse} ➜
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-xs italic text-stone-400 block pb-1">Unmarried / Solitary Journey</span>
+                              )}
+                            </div>
+
+                            {/* Children List */}
+                            <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
+                              <span className="text-[9px] uppercase font-bold text-stone-400 block mb-2">Children / Successor Seeds</span>
+                              {activeRelation.children.length > 0 ? (
+                                <div className="flex flex-wrap gap-2">
+                                  {activeRelation.children.map((child) => (
+                                    <button
+                                      key={child}
+                                      onClick={() => {
+                                        const cleanName = child.split(" ")[0];
+                                        if (familyRelations.some(c => c.name.toLowerCase() === cleanName.toLowerCase())) {
+                                          setFamilyTreeSearchQuery(cleanName);
+                                        }
+                                      }}
+                                      className="px-2 py-1 bg-emerald-50 dark:bg-emerald-955/20 border border-emerald-990/10 text-emerald-800 dark:text-emerald-400 rounded-lg text-xs font-black cursor-pointer hover:bg-emerald-100"
+                                    >
+                                      🌱 {child} ➜
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-xs italic text-stone-450 block pb-1">No biological heirs recorded on primary chart</span>
+                              )}
+                            </div>
+
+                          </div>
+
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+
             </div>
           </section>
 
