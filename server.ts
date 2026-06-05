@@ -50,7 +50,7 @@ Guidelines for your divine response:
       ];
 
       const payload = {
-        model: "google/gemma-2-9b-it", // Changing to a smaller / more reliable model name just in case the other one is restricted, but wait, the original was "google/gemma-4-31b-it" maybe I'll keep that or use "meta/llama-3.1-8b-instruct". The original was "google/gemma-4-31b-it" which doesn't exist, I think they meant 2. I will use "google/gemma-2-9b-it"
+        model: "meta/llama-3.1-8b-instruct",
         messages: formattedMessages,
         max_tokens: 2048,
         temperature: 0.7,
