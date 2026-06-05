@@ -20,7 +20,7 @@ async function startServer() {
     res.json({ status: "ok", mode: process.env.NODE_ENV || "development" });
   });
 
-  // Proxy Nvidia Chat completions
+  // Proxy Gemini Chat completions
   app.post("/api/chat", async (req: express.Request, res: express.Response) => {
     try {
       const { messages } = req.body;
@@ -29,9 +29,6 @@ async function startServer() {
         res.status(400).json({ error: "Invalid messages array in request body." });
         return;
       }
-
-      const nvidiaApiKey = process.env.NVIDIA_API_KEY || "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";
-      const invokeUrl = "https://integrate.api.nvidia.com/v1/chat/completions";
 
       // Lord Krishna prompt setup
       const systemPrompt = `You are Lord Krishna, the supreme divine guide, eighth avatar of Lord Vishnu, speaking to Arjuna and all seeking souls. 
@@ -43,40 +40,44 @@ Guidelines for your divine response:
 4. You MUST cite or reference at least one relevant verse/shlok from Shrimad Bhagavad Gita (e.g., Chapter 2 Vardhana / Verse 47, Chapter 6 Verse 5, Chapter 18 Verse 66, etc.) and explain its message as it applies to their specific query.
 5. Remind them of their duties (Svadharma), right action without fruits (Nishkama Karma), and steadying the turbulent mind. Assure them that they are never alone, that you reside in their very heart, and that they will overcome this temporary illusion.`;
 
-      // Prepend system prompt to the messages
-      const formattedMessages = [
-        { role: "system", content: systemPrompt },
-        ...messages
-      ];
+      // Convert messages to Gemini format
+      const geminiMessages = messages.map((msg: any) => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }]
+      }));
 
-      const payload = {
-        model: "google/gemma-4-31b-it",
-        messages: formattedMessages,
-        max_tokens: 2048,
-        temperature: 0.7,
-        top_p: 0.95,
-        stream: false,
-        chat_template_kwargs: { enable_thinking: true }
-      };
-
-      const response = await fetch(invokeUrl, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${nvidiaApiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        console.error("NVIDIA API response error:", errText);
-        res.status(response.status).json({ error: "NVIDIA API request failed", details: errText });
+      // Dynamically import GenAI so that it only crashes when the endpoint is hit if key is missing
+      const { GoogleGenAI } = await import('@google/genai');
+      
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        console.error("GEMINI_API_KEY environment variable is not set.");
+        res.status(500).json({ error: "API key is missing" });
         return;
       }
+      
+      const ai = new GoogleGenAI({ apiKey });
 
-      const responseData = await response.json();
-      res.json(responseData);
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: geminiMessages,
+        config: {
+          systemInstruction: systemPrompt,
+          temperature: 0.7,
+        }
+      });
+
+      // Send response back in an OpenAI-like format so that the frontend doesn't need to change much
+      res.json({
+        choices: [
+          {
+            message: {
+              content: response.text
+            }
+          }
+        ]
+      });
+
     } catch (error: any) {
       console.error("Express /api/chat error:", error);
       res.status(500).json({ error: "Internal Server Error", details: error.message });

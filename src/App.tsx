@@ -443,7 +443,10 @@ export default function App() {
     setChatLoading(true);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://bhagwat-geeta-portal.onrender.com";
+      let baseUrl = "https://bhagwat-geeta-portal.onrender.com";
+      if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname.includes("run.app"))) {
+         baseUrl = window.location.origin;
+      }
       const apiUrl = baseUrl.endsWith('/') ? `${baseUrl}api/chat` : `${baseUrl}/api/chat`;
 
       const res = await fetch(apiUrl, {
@@ -753,7 +756,7 @@ export default function App() {
 
           {/* HERO GREETING BANNER WITH PARALLAX ATMOSPHERE */}
           <header className="relative w-full min-h-screen pt-[120px] pb-24 px-4 bg-cover bg-center flex flex-col justify-center items-center text-center overflow-hidden transition-all" id="hero-section"
-                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.7)), url('images/battlefield.jpg')` }}>
+                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=1470&auto=format&fit=crop')` }}>
             <div className="max-w-4xl mx-auto space-y-6 px-4 z-10">
               <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-[#ffd700] drop-shadow-lg leading-tight uppercase tracking-wide">
                 Shrimad Bhagavad Gita
@@ -854,7 +857,7 @@ export default function App() {
               <div className="flex justify-center mb-10 w-full">
                 <div className="p-3 bg-white dark:bg-[#1b0f0a] border border-[#deb887] dark:border-amber-700/60 rounded-2xl shadow-md overflow-hidden max-w-sm w-full">
                   <img 
-                    src="images/authors.jpg" 
+                    src="https://images.unsplash.com/photo-1590055531615-f16d36ffe8ec?q=80&w=2670&auto=format&fit=crop" 
                     alt="Ancient Sacred Art Representing Divine Dictation" 
                     className="w-full h-auto object-cover rounded-xl transition-all"
                     referrerPolicy="no-referrer"
