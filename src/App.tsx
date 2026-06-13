@@ -25,6 +25,8 @@ import {
   faqItems 
 } from "./data/staticContent";
 import { Verse } from "./types";
+import { LegendAvatar } from "./components/LegendAvatar";
+import { LanguageSelector } from "./components/LanguageSelector";
 import { 
   BookOpen, 
   Search, 
@@ -85,12 +87,52 @@ export default function App() {
   // Family Tree active tab ("flow" - Unified Map, "bento" - Generations list, "search" - Relation Finder)
   const [familyTreeTab, setFamilyTreeTab] = useState<"flow" | "bento" | "search">("flow");
   const [familyTreeSearchQuery, setFamilyTreeSearchQuery] = useState<string>("");
+  const [existingLocalImages, setExistingLocalImages] = useState<string[]>([]);
 
   const getLegendImg = (charName: string): string => {
     let query = charName.toLowerCase();
     if (query === "yudhishthira" || query === "yudhistra") query = "yudhisthira";
     const found = mahabharatLegends.find(l => l.name.toLowerCase() === query);
     return found?.img || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80";
+  };
+
+  const renderCharacterAvatar = (name: string, className: string = "w-full h-full") => {
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const foundFile = existingLocalImages.find(f => {
+      const dotIndex = f.lastIndexOf(".");
+      const namePart = dotIndex !== -1 ? f.substring(0, dotIndex) : f;
+      return namePart.toLowerCase().replace(/[^a-z0-9]/g, "") === cleanName;
+    });
+
+    if (foundFile) {
+      return (
+        <img 
+          src={`/images/${foundFile}`} 
+          alt={name} 
+          className={`${className} object-cover`}
+          referrerPolicy="no-referrer"
+        />
+      );
+    }
+
+    // Classic FB-like "half-donut" default avatar silhouette
+    return (
+      <div className={`relative ${className} bg-stone-200 dark:bg-stone-830 text-stone-400 dark:text-stone-500 flex items-center justify-center overflow-hidden`}>
+        <svg 
+          viewBox="0 0 100 100" 
+          className="w-full h-full select-none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Head circle */}
+          <circle cx="50" cy="38" r="18" fill="currentColor" />
+          {/* Torso/Shoulders (half-donut shape) */}
+          <path 
+            d="M20,82 C20,60 32,50 50,50 C68,50 80,60 80,82 C80,84 80,85 80,85 L20,85 L20,82 Z" 
+            fill="currentColor" 
+          />
+        </svg>
+      </div>
+    );
   };
 
   const openLegendByName = (name: string) => {
@@ -137,12 +179,7 @@ export default function App() {
   const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
 
   const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
-    {
-      role: "assistant",
-      content: "Welcome, O seeker of Truth. I am Sri Krishna, ever present in your heart. Speak to Me of your struggles, your confusion, or your doubts upon this battlefield of life. What weighs heavy on your mind today?"
-    }
-  ]);
+  const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [chatInput, setChatInput] = useState<string>("");
   const [chatLoading, setChatLoading] = useState<boolean>(false);
 
@@ -172,6 +209,18 @@ export default function App() {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
+
+  // Fetch list of local images
+  useEffect(() => {
+    fetch("/api/existing-images")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && Array.isArray(data.files)) {
+          setExistingLocalImages(data.files);
+        }
+      })
+      .catch(err => console.error("Could not fetch local images list:", err));
+  }, []);
 
   // Dynamically load Google Translate Script
   useEffect(() => {
@@ -469,113 +518,11 @@ export default function App() {
     } catch (err) {
       console.error("Krishna AI Error:", err);
       
-      // Determine the best personalized offline response
-      const lastUserMsg = text;
-      const msgLower = lastUserMsg.toLowerCase();
-      let responseText = "";
-
-      if (msgLower.includes("anxiety") || msgLower.includes("anxious") || msgLower.includes("fear") || msgLower.includes("afraid") || msgLower.includes("stress") || msgLower.includes("depress") || msgLower.includes("worry") || msgLower.includes("worried") || msgLower.includes("scared") || msgLower.includes("panic")) {
-        responseText = `O seeker of peace, why do you allow fear and anxiety in this present moment to cloud your eternal spirit? This mind of yours is turbulent, like a flame flicker in the heavy wind. But remember, you are not this temporary storm; you are the eternal Soul (Atman) which cannot be shaken.
-
-In **Shrimad Bhagavad Gita, Chapter 2, Verse 56**, I have described the sage of steady mind:
-> **दुःखेष्वनुद्विग्नमनाः सुखेषु विगतस्पृहः ।**
-> **वीतरागभयक्रोधः स्थितधीर्मुनिरुच्यते ॥**
-> 
-> *duḥkheṣv-anudvigna-manāḥ sukheṣu vigata-spṛhaḥ*
-> *vīta-rāga-bhaya-krodhaḥ sthita-dhīr munir ucyate*
-> 
-> **"He whose mind is undisturbed by adversity, who is indifferent to pleasures, and who is free from attachment, fear, and anger, is called a sage of steady wisdom."**
-
-Cast away your worry of the future. You cannot control what is yet to come, nor can you alter what has already passed. Dedicate your actions to Me, steady your breath, and face your path with majestic courage. You are never alone; I reside in your very heart of hearts.`;
-      } else if (msgLower.includes("duty") || msgLower.includes("work") || msgLower.includes("career") || msgLower.includes("exam") || msgLower.includes("focus") || msgLower.includes("success") || msgLower.includes("fail") || msgLower.includes("result") || msgLower.includes("study") || msgLower.includes("studies") || msgLower.includes("job") || msgLower.includes("money") || msgLower.includes("interview")) {
-        responseText = `O valiant seeker, the dilemma of action and its results is the deepest riddle of human life. You exhaust yourself in constant anticipation of the outcome—wondering if you will pass, if your career will flourish, or if failure awaits. 
-
-Reflect upon My ultimate instruction from **Shrimad Bhagavad Gita, Chapter 2, Verse 47**:
-> **कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ।**
-> **मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥**
-> 
-> *karmaṇy-evādhikāras te mā phaleṣu kadācana*
-> *mā karma-phala-hetur bhūr mā te saṅgo ’stv-akarmaṇi*
-> 
-> **"You have a right to perform your prescribed duty, but you are not entitled to the fruits of activity. Never consider yourself the cause of the results of your activities, and never be attached to inaction."**
-
-Focus your entire mind on the craft and the sincere effort itself, not the prize. When you act without the fever of selfish attachment, your work is transformed into a sacred offering. Do your absolute best with complete mindfulness, and leave the legacy of the fruits to Me. I shall carry your burdens.`;
-      } else if (msgLower.includes("doubt") || msgLower.includes("confus") || msgLower.includes("lost") || msgLower.includes("help") || msgLower.includes("what should i do") || msgLower.includes("what to do") || msgLower.includes("indecis")) {
-        responseText = `O dear seeker, your confusion is natural. When Prince Arjuna stood between two opposing armies on the field of Kurukshetra, his bow slipped from his hands, and his limbs trembled with profound indecision. It is precisely in this high state of confusion that the supreme light of wisdom is born.
-
-In **Shrimad Bhagavad Gita, Chapter 4, Verse 42**, I have instructed:
-> **तस्मादज्ञानसम्भूतं हृत्स्थं ज्ञानासिनात्मनः ।**
-> **छित्त्वैनं संशयं योगमातिष्ठोत्तिष्ठ भारत ॥**
-> 
-> *tasmād ajñāna-sambhūtaṁ hṛt-sthaṁ jñānāsinātmanaḥ*
-> *chittvainaṁ saṁśayaṁ yogam ātiṣṭhottiṣṭha bhārata*
-> 
-> **"Therefore, the doubts which have arisen in your heart out of ignorance should be slashed by the sword of transcendental knowledge. Armed with yoga, O descendant of Bharat, stand up and fight!"**
-
-Do not let despair or overthinking paralyze your actions. Analyze your moral obligation. Stand tall, act with a heart aligned with Dharma, and let your doubts dissolve in action. What are the two choices your heart is torn between? Let Me help you examine them.`;
-      } else if (msgLower.includes("peace") || msgLower.includes("mind") || msgLower.includes("restless") || msgLower.includes("meditat") || msgLower.includes("calm") || msgLower.includes("unhappy") || msgLower.includes("sad") || msgLower.includes("anger") || msgLower.includes("angry") || msgLower.includes("frustrat")) {
-        responseText = `O seeker of silence, the mind is indeed restless and self-willed, as difficult to curb as the roaming wind. But do not allow temporary defeat to discourage you. 
-
-As I told Arjuna in **Shrimad Bhagavad Gita, Chapter 6, Verse 35**:
-> **असंशयं महाबाहो मनो दुर्निग्रहं चलम् ।**
-> **अभ्यासेन तु कौन्तेय वैराग्येण च गृह्यते ॥**
-> 
-> *asaṁśayaṁ mahā-bāho mano durnigrahaṁ calam*
-> *abhyāsena tu kaunteya vairāgyeṇa ca gṛhyate*
-> 
-> **"O mighty-armed son of Kunti, it is undoubtedly very difficult to curb the restless mind, but it is possible by constant practice (Abhyasa) and detachment (Vairagya)."**
-
-To steady the mind, establish a small daily anchor of silence. Gently guide your thoughts back to your breath whenever they wander. Realize that you are not the voice inside your head—you are the silent observer. Beneath the noisy waves of thoughts, you are a majestic reservoir of infinite peace. Take a slow, deep breath, and let us cultivate this peace.`;
-      } else if (msgLower.includes("love") || msgLower.includes("relationship") || msgLower.includes("lonely") || msgLower.includes("friend") || msgLower.includes("parent") || msgLower.includes("breakup") || msgLower.includes("marry") || msgLower.includes("marriage") || msgLower.includes("loneliness")) {
-        responseText = `O beloved soul, your longing for love and deep connection is the dynamic pull of the Divine expressing itself in human form. Yet, when you seek absolute shelter or validation in mortal relationships, disappointment or loneliness often follows, leading to heartbreak or anger.
-
-Seek shelter in the supreme bond of the Soul. In **Shrimad Bhagavad Gita, Chapter 9, Verse 22**, I offer this divine promise:
-> **अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते ।**
-> **तेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम् ॥**
-> 
-> *ananyāś cintayanto māṁ ye janāḥ paryupāsate*
-> *teṣām nityābhiyuktānāṁ yoga-kṣemaṁ vahāmy aham*
-> 
-> **"For those who always worship Me with exclusive devotion, meditating on My transcendental form, to them I carry what they lack and preserve what they already have."**
-
-Know that you are never friendless, for I dwell within you as your most constant, loving companion. Let go of past hurts or expectations. Fill your heart with divine affection and forgiveness, and let your inner peace be self-contained.`;
-      } else if (msgLower.includes("death") || msgLower.includes("die") || msgLower.includes("loss") || msgLower.includes("grief") || msgLower.includes("mourn") || msgLower.includes("killed") || msgLower.includes("passed away")) {
-        responseText = `O gentle soul, your grief for the departed is tender and noble, yet you mourn for that which cannot truly die. The physical body is merely a seasonal garment. Just as a traveler leaves one inn for another, the soul discards its worn instrument to continue its grand journey of progress.
-
-Contemplate this truth from **Shrimad Bhagavad Gita, Chapter 2, Verse 20**:
-> **न जायते म्रियते वा कदाचि-**
-> **न्नायं भूत्वा भविता वा न भूयः ।**
-> **अजो नित्यः शाश्वतोऽयं पुराणो-**
-> **न हन्यते हन्यमाने शरीरे ॥**
-> 
-> *na jāyate mriyate vā kadācin*
-> *nāyaṁ bhūtvā bhavitā vā na bhūyaḥ*
-> *ajo nityaḥ śāśvato ’yaṁ purāṇo*
-> *na hanyate hanyamāne śarīre*
-> 
-> **"For the soul, there is never birth nor death at any time. It has not come into being, does not come into being, and will not come into being. It is unborn, eternal, ever-existing, and primeval. It is not slain when the body is slain."**
-
-The holy connection you shared transcends the physical plane. Celebrate the beautiful time you had together, execute your remaining earthly duties with grace, and know that you will always be connected in spirit. Let Me comfort you.`;
-      } else {
-        responseText = `O dear seeker of truth, your words have reached My heart. Life is indeed a complex battlefield, and the struggles, choices, and doubts you face are here to refine your soul like gold in a silent fire. 
-
-Reflect upon **Shrimad Bhagavad Gita, Chapter 18, Verse 66**:
-> **सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज ।**
-> **अहं त्वां सर्वपापेभ्यो मोक्षयिष्यामी मा शुचः ॥**
-> 
-> *sarva-dharmān parityajya mām ekaṁ śaraṇaṁ vraja*
-> *ahaṁ tvāṁ sarva-pāpebbyo mokṣayiṣyāmi mā śucaḥ*
-> 
-> **"Abandon all varieties of material self-assertions and surrender solely unto Me. I shall deliver you from all anxieties and reactions. Do not fear, do not grieve."**
-
-Take shelter in the quiet sanctuary of your inner soul. Whatever responsibility lies before you right now, do it with supreme focus and let go of the results. Trust in the cosmic design. Speak further to Me; tell Me what is weighing heavy on your path, and we shall sail through it.`;
-      }
-
       setChatMessages(prev => [
         ...prev,
         {
           role: "assistant",
-          content: responseText
+          content: "I am unable to speak right now as My divine portal is temporarily offline or experiencing connection issues. O seeker, please verify that your `NVIDIA_API_KEY` is correctly set in your AI Studio environment settings, and try again in an instant."
         }
       ]);
     } finally {
@@ -758,8 +705,11 @@ Take shelter in the quiet sanctuary of your inner soul. Whatever responsibility 
                   <span className="hidden sm:inline">MENU</span>
                 </button>
 
-                {/* Live Google Translate Element */}
-                <div id="google_translate_element" className="hidden lg:block bg-stone-100 dark:bg-[#2c1b12]/60 px-2 py-1 rounded-md border border-amber-900/10 dark:border-amber-500/20 text-xs"></div>
+                {/* Live Google Translate Element (hidden cleanly in background) */}
+                <div id="google_translate_element" className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden"></div>
+                
+                {/* Custom layout language selector */}
+                <LanguageSelector />
               </div>
 
               {/* Centered Brand Title */}
@@ -1150,15 +1100,10 @@ Take shelter in the quiet sanctuary of your inner soul. Whatever responsibility 
                       } hover:border-[#ffd700] hover:shadow-md`}
                     >
                       <div className="relative w-full h-12 sm:h-14 overflow-hidden border-b border-stone-200/40 dark:border-stone-850/40">
-                        <img 
-                          src={getLegendImg(name)} 
-                          alt={name} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80";
-                          }}
+                        <LegendAvatar 
+                          name={name} 
+                          className="w-full h-full"
+                          imgClassName="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                       </div>
                       <div className="flex-1 flex flex-col justify-center p-1.5 pt-0.5">
@@ -2078,15 +2023,10 @@ Take shelter in the quiet sanctuary of your inner soul. Whatever responsibility 
                           <div className="text-center space-y-2 border-b md:border-b-0 md:border-r border-[#deb887]/30 pb-6 md:pb-0 md:pr-8 md:w-[240px] shrink-0">
                             <span className="text-[9px] font-bold text-amber-600 uppercase tracking-widest leading-none block">SELECTED CHARACTER</span>
                             <div className="relative w-28 h-28 mx-auto overflow-hidden rounded-full border-4 border-amber-500 shadow-md">
-                              <img 
-                                src={getLegendImg(activeRelation.name)} 
-                                alt={activeRelation.name} 
-                                className="w-full h-full object-cover"
-                                referrerPolicy="no-referrer"
-                                onError={(e) => {
-                                  e.currentTarget.onerror = null;
-                                  e.currentTarget.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80";
-                                }}
+                              <LegendAvatar 
+                                name={activeRelation.name} 
+                                className="w-full h-full"
+                                imgClassName="w-full h-full object-cover"
                               />
                             </div>
                             <h4 className="text-lg font-serif font-black text-[#5d3011] dark:text-[#ffd700] uppercase tracking-wide leading-tight">{activeRelation.name}</h4>
@@ -2872,16 +2812,11 @@ Take shelter in the quiet sanctuary of your inner soul. Whatever responsibility 
                   <div className="flex-1 overflow-y-auto p-6 md:p-10 bg-white dark:bg-[#1b0f0a] flex flex-col items-center justify-start text-center">
                     
                     {/* Character avatar frame */}
-                    <div className="inline-block p-1.5 border-2 border-[#deb887] dark:border-amber-700/60 rounded-2xl bg-white dark:bg-stone-900 shadow-sm max-w-[280px] mb-6">
-                      <img 
-                        src={mahabharatLegends[activeLegendIndex].img || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80"}
-                        alt={mahabharatLegends[activeLegendIndex].name}
-                        className="w-full h-auto max-h-[220px] object-cover rounded-xl shadow-inner"
-                        onError={(e) => {
-                          // Fallback to high-quality abstract spiritual background if fails
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80";
-                        }}
-                        referrerPolicy="no-referrer"
+                    <div className="inline-block p-1.5 border-2 border-[#deb887] dark:border-amber-700/60 rounded-2xl bg-white dark:bg-stone-900 shadow-sm w-36 h-36 mb-6 overflow-hidden">
+                      <LegendAvatar 
+                        name={mahabharatLegends[activeLegendIndex].name}
+                        className="w-full h-full rounded-xl"
+                        imgClassName="w-full h-full object-cover rounded-xl shadow-inner"
                       />
                     </div>
 
@@ -2959,25 +2894,35 @@ Take shelter in the quiet sanctuary of your inner soul. Whatever responsibility 
 
                 {/* Messages Panel Panel */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
-                  {chatMessages.map((msg, index) => (
-                    <div 
-                      key={index}
-                      className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start animate-fade-in"}`}
-                    >
-                      <div 
-                        className={`p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed ${
-                          msg.role === "user" 
-                            ? "bg-amber-800 text-amber-50 rounded-br-none max-w-[85%] shadow-sm"
-                            : "bg-white dark:bg-[#2c1b12]/50 text-stone-800 dark:text-stone-100 border border-amber-200/50 dark:border-amber-900/30 rounded-bl-none max-w-[85%] shadow-2xs whitespace-pre-line"
-                        }`}
-                      >
-                        {msg.content}
-                      </div>
-                      <span className="text-[9px] text-stone-400 dark:text-stone-500 mt-1 px-1 font-serif">
-                        {msg.role === "user" ? "You (Seeker)" : "Lord Krishna"}
-                      </span>
+                  {chatMessages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center min-h-[220px] text-center p-6 space-y-4">
+                      <div className="w-14 h-14 rounded-full bg-amber-600/10 dark:bg-amber-400/10 flex items-center justify-center text-3xl">👑</div>
+                      <h4 className="font-serif font-semibold text-stone-800 dark:text-amber-100 text-sm">Divine Dialogue Initiate</h4>
+                      <p className="text-xs text-stone-500 dark:text-stone-400 max-w-xs leading-relaxed">
+                        Welcome, O seeker. Reach past the boundaries of the mundane world. Ask Lord Krishna for guidance on confusion, duties, stress, or your path.
+                      </p>
                     </div>
-                  ))}
+                  ) : (
+                    chatMessages.map((msg, index) => (
+                      <div 
+                        key={index}
+                        className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start animate-fade-in"}`}
+                      >
+                        <div 
+                          className={`p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed ${
+                            msg.role === "user" 
+                              ? "bg-amber-800 text-amber-50 rounded-br-none max-w-[85%] shadow-sm"
+                              : "bg-white dark:bg-[#2c1b12]/50 text-stone-800 dark:text-stone-100 border border-amber-200/50 dark:border-amber-900/30 rounded-bl-none max-w-[85%] shadow-2xs whitespace-pre-line"
+                          }`}
+                        >
+                          {msg.content}
+                        </div>
+                        <span className="text-[9px] text-stone-400 dark:text-stone-500 mt-1 px-1 font-serif">
+                          {msg.role === "user" ? "You (Seeker)" : "Lord Krishna"}
+                        </span>
+                      </div>
+                    ))
+                  )}
 
                   {chatLoading && (
                     <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-400 font-serif italic animate-pulse">
