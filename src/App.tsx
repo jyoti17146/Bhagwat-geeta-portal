@@ -73,6 +73,7 @@ export default function App() {
   // Mobile menu and navigation states
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Introduction");
+  const treeScrollRef = useRef<HTMLDivElement>(null);
 
   // Portal Modals States
   const [studyPortalOpen, setStudyPortalOpen] = useState<boolean>(false);
@@ -88,6 +89,24 @@ export default function App() {
   const [familyTreeTab, setFamilyTreeTab] = useState<"flow" | "bento" | "search">("flow");
   const [familyTreeSearchQuery, setFamilyTreeSearchQuery] = useState<string>("");
   const [existingLocalImages, setExistingLocalImages] = useState<string[]>([]);
+  const [imageInsertCounter, setImageInsertCounter] = useState<number>(0);
+
+  const saveCustomImage = (charName: string, url: string) => {
+    try {
+      const saved = localStorage.getItem("gita_legend_images");
+      const obj = saved ? JSON.parse(saved) : {};
+      const key = charName.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (url) {
+        obj[key] = url;
+      } else {
+        delete obj[key];
+      }
+      localStorage.setItem("gita_legend_images", JSON.stringify(obj));
+      setImageInsertCounter(prev => prev + 1);
+    } catch (e) {
+      console.error("Failed to save custom image override:", e);
+    }
+  };
 
   const getLegendImg = (charName: string): string => {
     let query = charName.toLowerCase();
@@ -700,7 +719,7 @@ export default function App() {
               {/* Centered Brand Title */}
               <div 
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="absolute left-1/2 transform -translate-x-1/2 font-serif font-black text-[#8b4513] dark:text-[#ffd700] md:text-2xl text-xl tracking-[3px] select-none cursor-pointer hover:opacity-90"
+                className="absolute left-1/2 transform -translate-x-1/2 font-serif font-black text-[#8b4513] dark:text-[#ffd700] md:text-2xl text-xl tracking-[3px] select-none cursor-pointer hover:opacity-90 hidden md:block"
               >
                 GITA PORTAL
               </div>
@@ -1393,9 +1412,44 @@ export default function App() {
                   <>
                     {/* TAB 1: VISUAL FAMILY TREE DIAGRAM */}
                     {familyTreeTab === "flow" && (
-                      <div className="relative w-full overflow-x-auto pb-12 pt-4 scrollbar-thin scrollbar-thumb-amber-800 scrollbar-track-stone-100/50">
-                        {/* Antique Parchment Manuscript Map Area */}
-                        <div className="min-w-[1640px] max-w-[1750px] mx-auto bg-[#faf6ee] dark:bg-[#1a110a] border-4 border-double border-amber-600/40 dark:border-amber-700/50 rounded-3xl p-8 sm:p-11 shadow-[0_15px_45px_rgba(139,69,19,0.08)] relative flex flex-col gap-10">
+                      <div className="relative w-full">
+                        {/* Scroll Navigation Controls for Mobile/Desktop */}
+                        <div className="flex justify-between items-center gap-2 mb-3 bg-stone-50 dark:bg-[#1a110d]/40 p-3 rounded-2xl border border-amber-900/10 dark:border-amber-900/30">
+                          <span className="text-xs text-stone-600 dark:text-stone-300 font-serif">
+                            ← Swipe or use controls to browse the ancient genealogy canvas →
+                          </span>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => {
+                                if (treeScrollRef.current) {
+                                  treeScrollRef.current.scrollBy({ left: -320, behavior: "smooth" });
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-amber-50 dark:bg-[#1a110d] hover:bg-amber-100 dark:hover:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-800/15 rounded-lg text-[11px] font-sans font-bold flex items-center gap-1 cursor-pointer select-none shadow-xs active:scale-95"
+                              title="Scroll Left"
+                            >
+                              ← Scroll Left
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (treeScrollRef.current) {
+                                  treeScrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-amber-50 dark:bg-[#1a110d] hover:bg-amber-100 dark:hover:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-800/15 rounded-lg text-[11px] font-sans font-bold flex items-center gap-1 cursor-pointer select-none shadow-xs active:scale-95"
+                              title="Scroll Right"
+                            >
+                              Scroll Right →
+                            </button>
+                          </div>
+                        </div>
+
+                        <div 
+                          ref={treeScrollRef}
+                          className="relative w-full overflow-x-auto pb-12 pt-4 scrollbar-thin scrollbar-thumb-amber-800 scrollbar-track-stone-100/50"
+                        >
+                          {/* Antique Parchment Manuscript Map Area */}
+                          <div className="min-w-[1640px] max-w-[1750px] mx-auto bg-[#faf6ee] dark:bg-[#1a110a] border-4 border-double border-amber-600/40 dark:border-amber-700/50 rounded-3xl p-8 sm:p-11 shadow-[0_15px_45px_rgba(139,69,19,0.08)] relative flex flex-col gap-10">
                           
                           {/* Top Decorative Title Plate */}
                           <div className="text-center relative pb-2 border-b border-dashed border-amber-900/15 dark:border-amber-900/30">
@@ -1923,7 +1977,8 @@ export default function App() {
 
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
                     {/* TAB 2: GENERATIONAL BENTO CLUSTERS */}
                     {familyTreeTab === "bento" && (
@@ -2797,12 +2852,59 @@ export default function App() {
                   <div className="flex-1 overflow-y-auto p-6 md:p-10 bg-white dark:bg-[#1b0f0a] flex flex-col items-center justify-start text-center">
                     
                     {/* Character avatar frame */}
-                    <div className="inline-block p-1.5 border-2 border-[#deb887] dark:border-amber-700/60 rounded-2xl bg-white dark:bg-stone-900 shadow-sm w-36 h-36 mb-6 overflow-hidden">
-                      <LegendAvatar 
-                        name={mahabharatLegends[activeLegendIndex].name}
-                        className="w-full h-full rounded-xl"
-                        imgClassName="w-full h-full object-cover rounded-xl shadow-inner"
-                      />
+                    <div className="flex flex-col items-center gap-3 mb-6">
+                      <div className="inline-block p-1.5 border-2 border-[#deb887] dark:border-amber-700/60 rounded-2xl bg-white dark:bg-stone-900 shadow-sm w-36 h-36 overflow-hidden">
+                        <LegendAvatar 
+                          key={`${mahabharatLegends[activeLegendIndex].name}-${imageInsertCounter}`}
+                          name={mahabharatLegends[activeLegendIndex].name}
+                          className="w-full h-full rounded-xl"
+                          imgClassName="w-full h-full object-cover rounded-xl shadow-inner"
+                        />
+                      </div>
+                      
+                      {/* Image Insertion Form */}
+                      <div className="w-full max-w-xs flex flex-col gap-1 items-center">
+                        <div className="text-[10px] text-stone-500 dark:text-stone-400 font-sans">
+                          Portrait image override:
+                        </div>
+                        <div className="flex w-full gap-1">
+                          <input 
+                            type="text"
+                            placeholder="Paste custom image URL here..."
+                            id="custom-legend-img-input"
+                            defaultValue={(() => {
+                              try {
+                                const saved = localStorage.getItem("gita_legend_images");
+                                if (saved) {
+                                  const parsed = JSON.parse(saved);
+                                  const k = mahabharatLegends[activeLegendIndex].name.toLowerCase().replace(/[^a-z0-9]/g, "");
+                                  return parsed[k] || "";
+                                }
+                              } catch {}
+                              return "";
+                            })()}
+                            key={`input-${mahabharatLegends[activeLegendIndex].name}-${imageInsertCounter}`}
+                            className="flex-grow text-[11px] px-2 py-1 bg-[#faf6ee] dark:bg-[#150d0a] border border-stone-250 dark:border-amber-955/30 rounded-lg text-stone-800 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-amber-500"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                const val = (e.currentTarget as HTMLInputElement).value.trim();
+                                saveCustomImage(mahabharatLegends[activeLegendIndex].name, val);
+                              }
+                            }}
+                          />
+                          <button
+                            onClick={(e) => {
+                              const inputEl = e.currentTarget.previousElementSibling as HTMLInputElement;
+                              if (inputEl) {
+                                saveCustomImage(mahabharatLegends[activeLegendIndex].name, inputEl.value.trim());
+                              }
+                            }}
+                            className="bg-amber-850 text-amber-200 hover:bg-amber-800 border border-amber-600/30 px-3 py-1 rounded-lg text-[11px] font-sans font-bold cursor-pointer transition-colors active:scale-95 whitespace-nowrap"
+                          >
+                            Set URL
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     <h1 className="font-serif text-3xl font-bold text-[#8b4513] dark:text-[#ffd700] mb-2">

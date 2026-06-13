@@ -115,12 +115,54 @@ Guidelines for your divine response:
         }
       }
 
-      // Clean, professional notice if NVIDIA API is not configured or fails, instead of deceptive canned text
+      // Hybrid self-healing fallback to standard server-side Google Gemini SDK
+      const geminiKey = process.env.GEMINI_API_KEY;
+      if (geminiKey) {
+        try {
+          const { GoogleGenAI } = await import("@google/genai");
+          const ai = new GoogleGenAI({ apiKey: geminiKey });
+          
+          // Format conversation history nicely for the model
+          const messageHistory = messages
+            .filter((m: any) => m.role === "user" || m.role === "assistant")
+            .map((m: any) => `${m.role === "user" ? "Seeker (User)" : "Lord Krishna (AI)"}: ${m.content}`)
+            .join("\n\n");
+
+          const promptText = `Divine Instructions for your character Roleplay:\n${systemPrompt}\n\nExisting dialogue history between seeker and you:\n${messageHistory}\n\nSpeak now as Lord Krishna, and deliver your new loving response directly addressing the last query. Do not add metadata, tags, or narrator stage directions. Just write your spoken advice:`;
+
+          const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: promptText,
+            config: {
+              temperature: 0.7,
+              maxOutputTokens: 2048,
+            }
+          });
+
+          const content = response.text;
+          if (content) {
+            res.json({
+              choices: [
+                {
+                  message: {
+                    content: content
+                  }
+                }
+              ]
+            });
+            return;
+          }
+        } catch (geminiError: any) {
+          console.error("Gemini fallback API call failed:", geminiError);
+        }
+      }
+
+      // Clean, professional notice if neither API is configured or fails, instead of deceptive canned text
       res.json({
         choices: [
           {
             message: {
-              content: "I am unable to speak right now as My divine portal is missing its validation key. O diligent seeker, please configure your `NVIDIA_API_KEY` in the Environment Secrets menu on Google AI Studio to unlock live, real-time spiritual advice directly from Lord Krishna's AI."
+              content: "I am unable to speak right now as My divine portal is missing its validation key. O diligent seeker, please configure either your `NVIDIA_API_KEY` or `GEMINI_API_KEY` in the Environment Secrets menu on Google AI Studio to unlock live, real-time spiritual advice directly from Lord Krishna's AI."
             }
           }
         ]

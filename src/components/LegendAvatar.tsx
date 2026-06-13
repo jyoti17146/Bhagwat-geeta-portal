@@ -43,6 +43,22 @@ export const LegendAvatar: React.FC<LegendAvatarProps> = ({
 
   useEffect(() => {
     setIsLoading(true);
+    
+    // Check localStorage overrides first
+    try {
+      const saved = localStorage.getItem("gita_legend_images");
+      if (saved) {
+        const overrides = JSON.parse(saved);
+        if (overrides[cleanName]) {
+          setImgSrc(overrides[cleanName]);
+          setIsLoading(false);
+          return;
+        }
+      }
+    } catch (e) {
+      console.error("Error reading gita_legend_images from localStorage:", e);
+    }
+
     fetchExistingImages().then((files) => {
       // Find matches
       const match = files.find((f) => {
@@ -54,6 +70,7 @@ export const LegendAvatar: React.FC<LegendAvatarProps> = ({
       if (match) {
         setImgSrc(`/images/${match}`);
       } else {
+        // Fallback to static legend image URL if defined in data or default placeholder
         setImgSrc(null);
       }
       setIsLoading(false);

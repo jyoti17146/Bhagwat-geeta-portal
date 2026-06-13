@@ -128,11 +128,30 @@ export const LanguageSelector: React.FC = () => {
       // Update our reactive frontend state
       setActiveLang(langCode);
       localStorage.setItem("gita_preferred_lang", langCode);
+    } else {
+      setActiveLang(langCode);
+      localStorage.setItem("gita_preferred_lang", langCode);
+      loadGoogleTranslate();
+      setPollSystem(true);
     }
   };
 
   const handleSelect = (lang: Language) => {
-    applyLanguageChange(lang.code);
+    if (lang.code === "en") {
+      setActiveLang("en");
+      localStorage.setItem("gita_preferred_lang", "en");
+      
+      // Clear Google translation cookie if present
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+      
+      // Fresh clean reload to completely restore pristine layout from Google Translate Mutations
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
+    } else {
+      applyLanguageChange(lang.code);
+    }
     setIsOpen(false);
   };
 
