@@ -222,28 +222,13 @@ export default function App() {
       .catch(err => console.error("Could not fetch local images list:", err));
   }, []);
 
-  // Dynamically load Google Translate Script
+  // Dynamically load Google Translate Script lazily ONLY if saved user preference is non-English
   useEffect(() => {
-    const handleGoogleTranslateInit = () => {
-      const w = window as any;
-      if (w.google && w.google.translate) {
-        new w.google.translate.TranslateElement({
-          pageLanguage: 'en',
-          includedLanguages: 'hi,en,sa,mr,gu,ta,te,kn,ml,es,fr,de',
-          layout: w.google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-      }
-    };
-
-    if (!(window as any).googleTranslateElementInit) {
-      (window as any).googleTranslateElementInit = handleGoogleTranslateInit;
-      const script = document.createElement("script");
-      script.id = "google-translate-script";
-      script.type = "text/javascript";
-      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      document.body.appendChild(script);
-    } else {
-      handleGoogleTranslateInit();
+    const saved = localStorage.getItem("gita_preferred_lang") || "en";
+    if (saved !== "en") {
+      import("./components/LanguageSelector").then(({ loadGoogleTranslate }) => {
+        loadGoogleTranslate();
+      });
     }
   }, []);
 

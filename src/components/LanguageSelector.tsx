@@ -22,20 +22,71 @@ export const LANGUAGES: Language[] = [
   { code: 'de', name: 'German', nativeName: 'Deutsch' },
 ];
 
+export const loadGoogleTranslate = () => {
+  if (typeof window === "undefined") return;
+  const w = window as any;
+  if (w.googleTranslateScriptAdded) {
+    // If element is already defined, try to reinit if google.translate exists
+    if (w.google && w.google.translate) {
+      try {
+        const el = document.getElementById("google_translate_element");
+        if (el && !el.innerHTML) {
+          new w.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'hi,en,sa,mr,gu,ta,te,kn,ml,es,fr,de',
+            layout: w.google.translate.TranslateElement.InlineLayout.SIMPLE
+          }, 'google_translate_element');
+        }
+      } catch (e) {
+        console.error("Google Translate element re-initialization failed:", e);
+      }
+    }
+    return;
+  }
+  w.googleTranslateScriptAdded = true;
+
+  const handleGoogleTranslateInit = () => {
+    const innerW = window as any;
+    if (innerW.google && innerW.google.translate) {
+      new innerW.google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'hi,en,sa,mr,gu,ta,te,kn,ml,es,fr,de',
+        layout: innerW.google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  };
+
+  w.googleTranslateElementInit = handleGoogleTranslateInit;
+  const script = document.createElement("script");
+  script.id = "google-translate-script";
+  script.type = "text/javascript";
+  script.async = true;
+  script.defer = true;
+  script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+  document.body.appendChild(script);
+};
+
 export const LanguageSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLang, setActiveLang] = useState<string>("en");
   const [isTranslateReady, setIsTranslateReady] = useState(false);
+  const [pollSystem, setPollSystem] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Read saved language preference or default to English
   useEffect(() => {
     const saved = localStorage.getItem("gita_preferred_lang") || "en";
     setActiveLang(saved);
+    if (saved !== "en") {
+      loadGoogleTranslate();
+      setPollSystem(true);
+    }
   }, []);
 
-  // Poll for Google Translate selection element readiness
+  // Poll for Google Translate selection element readiness when requested
   useEffect(() => {
+    if (!pollSystem) return;
+
     let attempts = 0;
     const interval = setInterval(() => {
       attempts++;
@@ -55,7 +106,7 @@ export const LanguageSelector: React.FC = () => {
     }, 500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [pollSystem]);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -77,14 +128,20 @@ export const LanguageSelector: React.FC = () => {
       // Update our reactive frontend state
       setActiveLang(langCode);
       localStorage.setItem("gita_preferred_lang", langCode);
-    } else {
-      console.warn("Google translation system is still loading. Please try again in an instant.");
     }
   };
 
   const handleSelect = (lang: Language) => {
     applyLanguageChange(lang.code);
     setIsOpen(false);
+  };
+
+  const handleToggleOpen = () => {
+    if (!isOpen) {
+      loadGoogleTranslate();
+      setPollSystem(true);
+    }
+    setIsOpen(!isOpen);
   };
 
   const currentLanguageObj = LANGUAGES.find((l) => l.code === activeLang) || LANGUAGES[0];
@@ -94,7 +151,7 @@ export const LanguageSelector: React.FC = () => {
       {/* Selector Trigger Button */}
       <button
         id="language-selector-trigger-btn"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleOpen}
         className="h-10 px-3.5 bg-stone-100 dark:bg-stone-900/60 hover:bg-stone-200 dark:hover:bg-stone-850 text-stone-800 dark:text-amber-200 border border-stone-200 dark:border-amber-700/30 rounded-xl flex items-center justify-between gap-2.5 transition-all cursor-pointer shadow-inner font-sans font-medium text-xs select-none hover:border-amber-500/45"
       >
         <span className="flex items-center gap-1.5">
