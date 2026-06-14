@@ -3102,7 +3102,7 @@ export default function App() {
                               : "bg-white dark:bg-[#2c1b12]/50 text-stone-800 dark:text-stone-100 border border-amber-200/50 dark:border-amber-900/30 rounded-bl-none max-w-[85%] shadow-2xs whitespace-pre-line"
                           }`}
                         >
-                          {msg.role === "user" ? msg.content : <Translate text={msg.content} />}
+                          {msg.role === "user" ? msg.content : <Translate text={msg.content} typewrite={index === chatMessages.length - 1} />}
                         </div>
                         <span className="text-[9px] text-stone-400 dark:text-stone-500 mt-1 px-1 font-serif">
                           {msg.role === "user" ? <Translate text="You (Seeker)" /> : <Translate text="Lord Krishna" />}
