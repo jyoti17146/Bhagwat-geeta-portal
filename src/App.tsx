@@ -2733,81 +2733,81 @@ export default function App() {
           {/* VERSE STUDY PORTAL OVERLAY */}
           {/* ================================================== */}
           {studyPortalOpen && activeStudyVerses.length > 0 && (
-            <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
-              <div className="w-full max-w-4xl h-[90vh] bg-white dark:bg-[#1b0f0a] rounded-2xl border-2 border-[#d4af37] dark:border-amber-400 overflow-hidden flex flex-col shadow-2xl relative">
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+              <div className="w-full max-w-4xl h-[95vh] sm:h-[90vh] bg-white dark:bg-[#1b0f0a] rounded-2xl border-2 border-[#d4af37] dark:border-amber-400 overflow-hidden flex flex-col shadow-2xl relative">
                 
                 {/* Header with escape actions */}
-                <div className="p-5 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-[#2c1b12]/60 flex items-center justify-between">
+                <div className="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-[#2c1b12]/60 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="p-2 bg-amber-100 dark:bg-amber-950 rounded-lg">
                       <BookOpen className="w-5 h-5 text-amber-700 dark:text-amber-400" />
                     </span>
-                    <h2 className="font-serif text-lg font-bold text-amber-900 dark:text-amber-200">
+                    <h2 className="font-serif text-sm sm:text-base md:text-lg font-bold text-amber-900 dark:text-amber-200 leading-tight">
                       Gita Study Center — Chapter {activeStudyChapter}
                     </h2>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                     <button 
                       onClick={() => toggleBookmark(activeStudyChapter, activeStudyVerses[activeVerseIndex].verse)}
-                      className={`px-3 py-1.5 rounded-full border flex items-center gap-1.5 transition-all text-xs cursor-pointer font-bold ${
+                      className={`px-3 py-1.5 rounded-full border flex items-center gap-1.5 transition-all text-[10px] sm:text-xs cursor-pointer font-bold ${
                         isBookmarked(activeStudyChapter, activeStudyVerses[activeVerseIndex].verse)
                           ? "bg-amber-100 dark:bg-amber-950 border-amber-500 text-amber-900 dark:text-amber-200"
                           : "border-stone-300 dark:border-stone-700 bg-transparent text-[#8b4513] dark:text-amber-300 hover:bg-stone-50 dark:hover:bg-amber-950/20"
                       }`}
                       title="Bookmark this verse"
                     >
-                      <BookMarked className={`w-4 h-4 ${isBookmarked(activeStudyChapter, activeStudyVerses[activeVerseIndex].verse) ? "fill-amber-600 text-amber-600 dark:fill-amber-400 dark:text-amber-400" : ""}`} />
+                      <BookMarked className={`w-3.5 h-3.5 ${isBookmarked(activeStudyChapter, activeStudyVerses[activeVerseIndex].verse) ? "fill-amber-600 text-amber-600 dark:fill-amber-400 dark:text-amber-400" : ""}`} />
                       <span>{isBookmarked(activeStudyChapter, activeStudyVerses[activeVerseIndex].verse) ? "Bookmarked" : "Bookmark"}</span>
                     </button>
                     <button 
                       onClick={closeStudyPortal}
-                      className="p-1 px-3.5 py-1.5 rounded-full border border-amber-800 text-amber-950 dark:text-amber-200 bg-transparent hover:bg-amber-800 hover:text-white dark:hover:bg-amber-700 font-bold transition-all text-xs cursor-pointer"
+                      className="p-1 px-3 py-1.5 sm:px-3.5 rounded-full border border-amber-800 text-amber-950 dark:text-amber-200 bg-transparent hover:bg-amber-800 hover:text-white dark:hover:bg-amber-700 font-bold transition-all text-[10px] sm:text-xs cursor-pointer"
                     >
-                      ✕ Exit Study
+                      ✕ Exit
                     </button>
                   </div>
                 </div>
 
                 {/* Main Scrollable Wisdom Area */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-white dark:bg-[#1b0f0a] scroll-smooth">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 md:space-y-8 bg-white dark:bg-[#1b0f0a] scroll-smooth">
                   
                   {/* Active Shlok Devanagari Hero card */}
-                  <div className="bg-white dark:bg-[#2c1b12]/40 rounded-2xl border border-[#e0d5c0] dark:border-amber-700/40 p-8 text-center max-w-3xl mx-auto shadow-sm">
+                  <div className="bg-white dark:bg-[#2c1b12]/40 rounded-2xl border border-[#e0d5c0] dark:border-amber-700/40 p-5 sm:p-8 text-center max-w-3xl mx-auto shadow-sm">
                     <div className="text-xl text-amber-600 dark:text-amber-400 mb-2">✨</div>
-                    <p className="sanskrit-holy-text text-amber-900 dark:text-[#ffd700] text-3xl font-extrabold whitespace-pre-line tracking-wider leading-relaxed">
+                    <p className="sanskrit-holy-text text-amber-900 dark:text-[#ffd700] whitespace-pre-line tracking-wider leading-relaxed">
                       {activeStudyVerses[activeVerseIndex].sanskrit}
                     </p>
                   </div>
 
                   {/* Transliteration Box */}
-                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-[#deb887]/50 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm">
+                  <div className="relative bg-white dark:bg-[#26160f] p-4 sm:p-6 pt-6 sm:pt-8 rounded-xl border border-[#deb887]/50 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm">
                     <span className="absolute -top-3 left-6 px-3 py-1 bg-amber-800 text-amber-100 rounded text-[10px] font-bold uppercase tracking-wider">
                       Transliteration
                     </span>
-                    <p className="text-[#5d4037] dark:text-stone-300 italic text-base leading-relaxed">
+                    <p className="text-[#5d4037] dark:text-stone-300 italic text-sm sm:text-base leading-relaxed">
                       {activeStudyVerses[activeVerseIndex].transliteration}
                     </p>
                   </div>
 
                   {/* English Translation Box */}
-                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-orange-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm animate-fade-in font-sans">
+                  <div className="relative bg-white dark:bg-[#26160f] p-4 sm:p-6 pt-6 sm:pt-8 rounded-xl border border-orange-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm animate-fade-in font-sans">
                     <span className="absolute -top-3 left-6 px-3 py-1 bg-amber-800 text-amber-100 rounded text-[10px] font-bold uppercase tracking-wider">
                       <Translate text="Translation" />
                     </span>
-                    <p className="text-[#4a3628] dark:text-stone-100 text-base sm:text-lg font-medium leading-relaxed">
+                    <p className="text-[#4a3628] dark:text-stone-100 text-sm sm:text-base md:text-lg font-medium leading-relaxed">
                       "<Translate text={activeStudyVerses[activeVerseIndex].translation} />"
                     </p>
                   </div>
 
                   {/* Detailed purports & commentary box */}
-                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-amber-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm animate-fade-in font-sans">
+                  <div className="relative bg-white dark:bg-[#26160f] p-4 sm:p-6 pt-6 sm:pt-8 rounded-xl border border-amber-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm animate-fade-in font-sans">
                     <span className="absolute -top-3 left-6 px-3 py-1 bg-[#8b4513] text-[#ffd700] rounded text-[10px] font-bold uppercase tracking-wider">
                       <Translate text="Purport" /> & <Translate text="Commentary" />
                     </span>
                     <Translate 
                       html={true} 
                       text={activeStudyVerses[activeVerseIndex].purport} 
-                      className="text-stone-800 dark:text-stone-200 text-sm sm:text-base leading-relaxed space-y-4" 
+                      className="text-stone-800 dark:text-stone-200 text-xs sm:text-sm md:text-base leading-relaxed space-y-4" 
                       as="div" 
                     />
                   </div>
@@ -2819,23 +2819,23 @@ export default function App() {
                   <button 
                     onClick={prevVerse}
                     disabled={activeVerseIndex === 0}
-                    className="px-4 py-2 bg-[#8b4513] disabled:opacity-30 disabled:pointer-events-none text-[#ffd700] rounded-full font-bold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer hover:bg-[#5d4037]"
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#8b4513] disabled:opacity-30 disabled:pointer-events-none text-[#ffd700] rounded-full font-bold text-[10px] sm:text-xs md:text-sm flex items-center gap-1 cursor-pointer hover:bg-[#5d4037]"
                   >
-                    <ArrowLeft className="w-4 h-4" />
+                    <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Previous</span>
                   </button>
 
-                  <span id="verseCounter" className="font-serif font-black text-amber-900 dark:text-amber-200 text-base sm:text-lg">
+                  <span id="verseCounter" className="font-serif font-black text-amber-900 dark:text-amber-200 text-xs sm:text-base md:text-lg">
                     Verse {activeStudyVerses[activeVerseIndex].verse || (activeVerseIndex + 1)} of {activeStudyVerses.length}
                   </span>
 
                   <button 
                     onClick={nextVerse}
                     disabled={activeVerseIndex === activeStudyVerses.length - 1}
-                    className="px-4 py-2 bg-[#8b4513] disabled:opacity-30 disabled:pointer-events-none text-[#ffd700] rounded-full font-bold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer hover:bg-[#5d4037]"
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#8b4513] disabled:opacity-30 disabled:pointer-events-none text-[#ffd700] rounded-full font-bold text-[10px] sm:text-xs md:text-sm flex items-center gap-1 cursor-pointer hover:bg-[#5d4037]"
                   >
                     <span>Next</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
@@ -2870,7 +2870,7 @@ export default function App() {
                 <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                   
                   {/* Left Sidebar Menu */}
-                  <div className="w-full md:w-[280px] bg-white dark:bg-[#26160f] border-b md:border-b-0 md:border-r border-[#deb887] dark:border-amber-800 overflow-y-auto p-4 flex flex-row md:flex-col gap-2 shrink-0">
+                  <div className="w-full md:w-[280px] bg-white dark:bg-[#26160f] border-b md:border-b-0 md:border-r border-[#deb887] dark:border-amber-800 overflow-x-auto md:overflow-y-auto p-4 flex flex-row md:flex-col gap-2 shrink-0">
                     {mahabharatLegends.map((legend, index) => (
                       <button
                         key={index}
@@ -2995,7 +2995,7 @@ export default function App() {
             
             {/* Expanded Conversation Drawer */}
             {chatOpen && (
-              <div className="w-[340px] sm:w-[400px] h-[520px] bg-[#fdfaf2] dark:bg-[#190e0a] border-2 border-[#d4af37] rounded-3xl shadow-3xl flex flex-col overflow-hidden mb-4 transition-all duration-300 animate-slide-up">
+              <div className="w-[calc(100vw-2rem)] sm:w-[400px] h-[520px] max-h-[80vh] bg-[#fdfaf2] dark:bg-[#190e0a] border-2 border-[#d4af37] rounded-3xl shadow-3xl flex flex-col overflow-hidden mb-4 transition-all duration-300 animate-slide-up">
                 
                 {/* Chat Header */}
                 <div className="bg-gradient-to-r from-[#8b4513] to-[#5d3011] p-4 text-stone-100 flex items-center justify-between border-b border-[#d4af37]/40 shadow-sm shrink-0">
