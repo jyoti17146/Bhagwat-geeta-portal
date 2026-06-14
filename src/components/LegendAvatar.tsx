@@ -41,6 +41,31 @@ export const LegendAvatar: React.FC<LegendAvatarProps> = ({
 
   const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
+  // Direct map for known character images (handles name variations/aliases)
+  const getKnownImageFilename = (normName: string): string | null => {
+    if (normName === "bhishma" || normName === "bhisma") return "bhisma.jpg";
+    if (normName === "yudhistra" || normName === "yudhishthira" || normName === "yudhisthir" || normName === "yudhishthir" || normName === "yudhisthira") return "yudhisthira.jpg";
+    if (normName === "bheem" || normName === "bhima" || normName === "bheema") return "bheema.jpg";
+    if (normName === "arjun" || normName === "arjuna") return "arjuna.jpg";
+    if (normName === "karn" || normName === "karna") return "karna.jpg";
+    if (normName === "duryodhan" || normName === "duryodhana") return "duryodhana.jpg";
+    if (normName === "dhritarashtra" || normName === "dhritrashthra" || normName === "dhritrastra") return "dhritrastra.jpg";
+    if (normName === "sahadev" || normName === "sahadeva") return "sahadeva.jpg";
+    if (normName === "vidur" || normName === "vidura") return "vidur.jpg";
+    if (normName === "kaurava" || normName === "kauravas") return "kaurava.JPG";
+    if (normName === "abhimanyu") return "abhimanyu.jpg";
+    if (normName === "ashwathama") return "ashwathama.jpg";
+    if (normName === "draupadi") return "draupadi.jpg";
+    if (normName === "dronacharya") return "dronacharya.jpg";
+    if (normName === "gandhari") return "gandhari.jpg";
+    if (normName === "krishna") return "krishna.jpg";
+    if (normName === "kunti") return "kunti.jpg";
+    if (normName === "nakula") return "nakula.jpg";
+    if (normName === "pandu") return "pandu.jpg";
+    if (normName === "sanjaya") return "sanjaya.jpg";
+    return null;
+  };
+
   useEffect(() => {
     setIsLoading(true);
     
@@ -57,6 +82,14 @@ export const LegendAvatar: React.FC<LegendAvatarProps> = ({
       }
     } catch (e) {
       console.error("Error reading gita_legend_images from localStorage:", e);
+    }
+
+    // Direct mapping check first to guarantee immediate loading and proper alias resolution
+    const knownFile = getKnownImageFilename(cleanName);
+    if (knownFile) {
+      setImgSrc(`/images/${knownFile}`);
+      setIsLoading(false);
+      return;
     }
 
     fetchExistingImages().then((files) => {

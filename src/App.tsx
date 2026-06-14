@@ -90,7 +90,30 @@ export default function App() {
   // Family Tree active tab ("flow" - Unified Map, "bento" - Generations list, "search" - Relation Finder)
   const [familyTreeTab, setFamilyTreeTab] = useState<"flow" | "bento" | "search">("bento");
   const [familyTreeSearchQuery, setFamilyTreeSearchQuery] = useState<string>("");
-  const [existingLocalImages, setExistingLocalImages] = useState<string[]>([]);
+  const [existingLocalImages, setExistingLocalImages] = useState<string[]>([
+    "abhimanyu.jpg",
+    "arjuna.jpg",
+    "ashwathama.jpg",
+    "authors.jpg",
+    "battlefield.jpg",
+    "bheema.jpg",
+    "bhisma.jpg",
+    "dhritrastra.jpg",
+    "draupadi.jpg",
+    "dronacharya.jpg",
+    "duryodhana.jpg",
+    "gandhari.jpg",
+    "karna.jpg",
+    "kaurava.JPG",
+    "krishna.jpg",
+    "kunti.jpg",
+    "nakula.jpg",
+    "pandu.jpg",
+    "sahadeva.jpg",
+    "sanjaya.jpg",
+    "vidur.jpg",
+    "yudhisthira.jpg"
+  ]);
   const [imageInsertCounter, setImageInsertCounter] = useState<number>(0);
 
   const saveCustomImage = (charName: string, url: string) => {
@@ -119,6 +142,44 @@ export default function App() {
 
   const renderCharacterAvatar = (name: string, className: string = "w-full h-full") => {
     const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    
+    // Direct known-character names to correct filenames mapping
+    const getMappedFilename = (norm: string): string | null => {
+      if (norm === "bhishma" || norm === "bhisma") return "bhisma.jpg";
+      if (norm === "yudhistra" || norm === "yudhishthira" || norm === "yudhisthir" || norm === "yudhishthir" || norm === "yudhisthira") return "yudhisthira.jpg";
+      if (norm === "bheem" || norm === "bhima" || norm === "bheema") return "bheema.jpg";
+      if (norm === "arjun" || norm === "arjuna") return "arjuna.jpg";
+      if (norm === "karn" || norm === "karna") return "karna.jpg";
+      if (norm === "duryodhan" || norm === "duryodhana") return "duryodhana.jpg";
+      if (norm === "dhritarashtra" || norm === "dhritrashthra" || norm === "dhritrastra") return "dhritrastra.jpg";
+      if (norm === "sahadev" || norm === "sahadeva") return "sahadeva.jpg";
+      if (norm === "vidur" || norm === "vidura") return "vidur.jpg";
+      if (norm === "kaurava" || norm === "kauravas") return "kaurava.JPG";
+      if (norm === "abhimanyu") return "abhimanyu.jpg";
+      if (norm === "ashwathama") return "ashwathama.jpg";
+      if (norm === "draupadi") return "draupadi.jpg";
+      if (norm === "dronacharya") return "dronacharya.jpg";
+      if (norm === "gandhari") return "gandhari.jpg";
+      if (norm === "krishna") return "krishna.jpg";
+      if (norm === "kunti") return "kunti.jpg";
+      if (norm === "nakula") return "nakula.jpg";
+      if (norm === "pandu") return "pandu.jpg";
+      if (norm === "sanjaya") return "sanjaya.jpg";
+      return null;
+    };
+
+    const mappedFile = getMappedFilename(cleanName);
+    if (mappedFile) {
+      return (
+        <img 
+          src={`/images/${mappedFile}`} 
+          alt={name} 
+          className={`${className} object-cover`}
+          referrerPolicy="no-referrer"
+        />
+      );
+    }
+
     const foundFile = existingLocalImages.find(f => {
       const dotIndex = f.lastIndexOf(".");
       const namePart = dotIndex !== -1 ? f.substring(0, dotIndex) : f;
