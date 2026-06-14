@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getApiUrl } from "../utils/api";
 
 // Cache for translational elements to minimize API calls and keep responses instant
 const memoryCache: Record<string, string> = {};
@@ -149,7 +150,7 @@ export const enqueueTranslation = (text: string, activeLang: string): Promise<st
       const textsToTranslate = Object.keys(currentQueue);
       if (textsToTranslate.length === 0) return;
 
-      fetch("/api/translate", {
+      fetch(getApiUrl("/api/translate"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

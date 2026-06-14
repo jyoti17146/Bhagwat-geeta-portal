@@ -28,6 +28,7 @@ import { Verse } from "./types";
 import { LegendAvatar } from "./components/LegendAvatar";
 import { LanguageSelector } from "./components/LanguageSelector";
 import { Translate, useTranslate } from "./components/Translate";
+import { getApiUrl } from "./utils/api";
 import { 
   BookOpen, 
   Search, 
@@ -294,7 +295,7 @@ export default function App() {
 
   // Fetch list of local images
   useEffect(() => {
-    fetch("/api/existing-images")
+    fetch(getApiUrl("/api/existing-images"))
       .then(res => res.json())
       .then(data => {
         if (data && data.success && Array.isArray(data.files)) {
@@ -559,11 +560,7 @@ export default function App() {
     setChatLoading(true);
 
     try {
-      let baseUrl = "https://bhagwat-geeta-portal.onrender.com";
-      if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname.includes("run.app"))) {
-         baseUrl = window.location.origin;
-      }
-      const apiUrl = baseUrl.endsWith('/') ? `${baseUrl}api/chat` : `${baseUrl}/api/chat`;
+      const apiUrl = getApiUrl("/api/chat");
 
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -873,7 +870,7 @@ export default function App() {
 
           {/* HERO GREETING BANNER WITH PARALLAX ATMOSPHERE */}
           <header className="relative w-full min-h-screen pt-[120px] pb-24 px-4 bg-cover bg-center flex flex-col justify-center items-center text-center overflow-hidden transition-all" id="hero-section"
-                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.7)), url('/images/battlefield.jpg')` }}>
+                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=1470&auto=format&fit=crop')` }}>
             <div className="max-w-4xl mx-auto space-y-6 px-4 z-10">
               <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-[#ffd700] drop-shadow-lg leading-tight uppercase tracking-wide">
                 <Translate text="Shrimad Bhagavad Gita" />
