@@ -314,50 +314,27 @@ Guidelines for your response:
               ...formattedMessages
             ],
             temperature: 0.7,
-            max_tokens: 2048,
-            stream: true
+            max_tokens: 2048
           })
         });
 
         if (response.ok) {
-          res.setHeader("Content-Type", "text/event-stream");
-          res.setHeader("Cache-Control", "no-cache");
-          res.setHeader("Connection", "keep-alive");
-
-          const reader = response.body;
-          if (reader) {
-            let buffer = "";
-            for await (const chunk of reader as any) {
-              buffer += chunk.toString("utf-8");
-              let boundary = buffer.indexOf("\n");
-              while (boundary !== -1) {
-                const line = buffer.substring(0, boundary).trim();
-                buffer = buffer.substring(boundary + 1);
-                boundary = buffer.indexOf("\n");
-
-                if (!line) continue;
-                if (line === "data: [DONE]") continue;
-
-                if (line.startsWith("data: ")) {
-                  try {
-                    const jsonStr = line.slice(6);
-                    const parsed = JSON.parse(jsonStr);
-                    const delta = parsed.choices?.[0]?.delta?.content;
-                    if (delta) {
-                      res.write(`data: ${JSON.stringify({ text: delta })}\n\n`);
-                    }
-                  } catch (e) {
-                    // Ignore parsing error for cut off lines
+          const data = await response.json() as any;
+          if (data && data.choices && data.choices[0] && data.choices[0].message) {
+            res.json({
+              choices: [
+                {
+                  message: {
+                    content: data.choices[0].message.content
                   }
                 }
-              }
-            }
+              ]
+            });
+            return;
           }
-          res.end();
-          return;
         }
       } catch (apiError: any) {
-        console.error("NVIDIA streaming failed in standalone:", apiError);
+        console.error("NVIDIA API call failed in standalone:", apiError);
       }
     }
 
@@ -374,7 +351,7 @@ Guidelines for your response:
 
         const promptText = `Divine Instructions for your character Roleplay:\n${systemPrompt}\n\nExisting dialogue history:\n${messageHistory}\n\nDeliver your divine guidance directly addressing the last query as Lord Krishna:`;
 
-        const responseStream = await ai.models.generateContentStream({
+        const response = await ai.models.generateContent({
           model: "gemini-2.5-flash",
           contents: promptText,
           config: {
@@ -383,30 +360,33 @@ Guidelines for your response:
           }
         });
 
-        res.setHeader("Content-Type", "text/event-stream");
-        res.setHeader("Cache-Control", "no-cache");
-        res.setHeader("Connection", "keep-alive");
-
-        for await (const chunk of responseStream) {
-          const textChunk = chunk.text;
-          if (textChunk) {
-            res.write(`data: ${JSON.stringify({ text: textChunk })}\n\n`);
-          }
+        const content = response.text;
+        if (content) {
+          res.json({
+            choices: [
+              {
+                message: {
+                  content: content
+                }
+              }
+            ]
+          });
+          return;
         }
-        res.end();
-        return;
       } catch (geminiError) {
-        console.error("Gemini streaming failed in standalone:", geminiError);
+        console.error("Fallback Gemini compilation failed in standalone:", geminiError);
       }
     }
 
-    // Standard fallback response streamed to match streaming protocol perfectly
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    const fallbackMsg = "O seeker, My words are momentarily silent as My validation keys are missing. Please ensure GEMINI_API_KEY or NVIDIA_API_KEY is configured correctly in the Render Environment Variables setup.";
-    res.write(`data: ${JSON.stringify({ text: fallbackMsg })}\n\n`);
-    res.end();
+    res.json({
+      choices: [
+        {
+          message: {
+            content: "O seeker, my words are momentarily silent as my validation keys are missing. Please ensure GEMINI_API_KEY or NVIDIA_API_KEY is configured correctly in the Render Environment Variables setup."
+          }
+        }
+      ]
+    });
   } catch (error: any) {
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }

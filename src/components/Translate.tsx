@@ -121,8 +121,6 @@ export interface TranslateProps {
   className?: string;
   as?: any;
   html?: boolean;
-  typewrite?: boolean;
-  isStreaming?: boolean;
 }
 
 // Queues of texts to translate, keyed by language.
@@ -282,47 +280,13 @@ export const Translate: React.FC<TranslateProps> = ({
   text,
   className = "",
   as: Component = "span",
-  html = false,
-  typewrite = false,
-  isStreaming = false
+  html = false
 }) => {
   const [translatedText, setTranslatedText] = useState<string>(text);
-  const [typewrittenText, setTypewrittenText] = useState<string>("");
   const [activeLang, setActiveLang] = useState<string>(() => {
     return localStorage.getItem("gita_preferred_lang") || "en";
   });
   const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!typewrite) {
-      setTypewrittenText(translatedText);
-      return;
-    }
-
-    if (translatedText.length < 5) {
-      setTypewrittenText(translatedText);
-      return;
-    }
-
-    let currentIndex = 0;
-    setTypewrittenText("");
-
-    const interval = setInterval(() => {
-      const increment = translatedText.length > 200 ? 3 : 2;
-      currentIndex += increment;
-
-      if (currentIndex >= translatedText.length) {
-        setTypewrittenText(translatedText);
-        clearInterval(interval);
-      } else {
-        setTypewrittenText(translatedText.slice(0, currentIndex));
-      }
-    }, 12);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [translatedText, typewrite]);
 
   // Sync language selection on changes via storage or event dispatch
   useEffect(() => {
@@ -348,7 +312,7 @@ export const Translate: React.FC<TranslateProps> = ({
       return;
     }
 
-    if (activeLang === "en" || isStreaming) {
+    if (activeLang === "en") {
       setTranslatedText(text);
       return;
     }
@@ -409,14 +373,14 @@ export const Translate: React.FC<TranslateProps> = ({
     return () => {
       active = false;
     };
-  }, [text, activeLang, isStreaming]);
+  }, [text, activeLang]);
 
   if (html) {
     return (
       <Component 
         className={`${className} ${loading ? "opacity-90 transition-opacity" : ""}`}
         id={`translated-${activeLang}-${text.slice(0, 15).replace(/[^a-zA-Z0-9]/g, "-")}`}
-        dangerouslySetInnerHTML={{ __html: typewrittenText }}
+        dangerouslySetInnerHTML={{ __html: translatedText }}
       />
     );
   }
@@ -426,7 +390,7 @@ export const Translate: React.FC<TranslateProps> = ({
       className={`${className} ${loading ? "opacity-90 transition-opacity" : ""}`}
       id={`translated-${activeLang}-${text.slice(0, 15).replace(/[^a-zA-Z0-9]/g, "-")}`}
     >
-      {typewrittenText}
+      {translatedText}
     </Component>
   );
 };
