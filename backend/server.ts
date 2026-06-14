@@ -19,18 +19,8 @@ console.log("Allowed CORS origins configured:", allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g., node-fetch, postman, server-to-server)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes("*")) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error(`CORS Policy: Origin ${origin} is not allowed access.`), false);
+    // Dynamically allow any origin to prevent CORS blocking on preflight or standard requests
+    callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
