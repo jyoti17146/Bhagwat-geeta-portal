@@ -77,6 +77,7 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Introduction");
   const treeScrollRef = useRef<HTMLDivElement>(null);
+  const chatScrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Portal Modals States
   const [studyPortalOpen, setStudyPortalOpen] = useState<boolean>(false);
@@ -265,7 +266,13 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [chatInput, setChatInput] = useState<string>("");
   const [chatLoading, setChatLoading] = useState<boolean>(false);
-  const [isStreaming, setIsStreaming] = useState<boolean>(false);
+
+  // Auto scroll chat to bottom when dialogue increases or stream is actively typing
+  useEffect(() => {
+    if (chatScrollContainerRef.current) {
+      chatScrollContainerRef.current.scrollTop = chatScrollContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages, chatLoading, chatOpen]);
 
   // Listen to Firebase Auth state
   useEffect(() => {
@@ -559,7 +566,6 @@ export default function App() {
     const updatedMessages = [...chatMessages, userMsg];
     setChatMessages(updatedMessages);
     setChatLoading(true);
-    setIsStreaming(true);
 
     try {
       const apiUrl = getApiUrl("/api/chat");
@@ -578,62 +584,72 @@ export default function App() {
         throw new Error("Krishna AI request failed");
       }
 
-      // Add placeholder message for assistant and turn off first-stage spinner
-      setChatMessages(prev => [...prev, { role: "assistant", content: "" }]);
-      setChatLoading(false);
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("text/event-stream")) {
+        const reader = res.body?.getReader();
+        if (!reader) {
+          throw new Error("No body reader in stream response");
+        }
 
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder("utf-8");
+        // Initialize helper empty reply
+        setChatMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
-      if (!reader) {
-        throw new Error("No readable stream reader available on response");
-      }
+        const decoder = new TextDecoder("utf-8");
+        let streamBuffer = "";
 
-      let accumulatedContent = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedContent += chunk;
+          streamBuffer += decoder.decode(value, { stream: true });
+          let newlineIndex = streamBuffer.indexOf("\n");
 
-        setChatMessages(prev => {
-          const nextMsgs = [...prev];
-          const lastIndex = nextMsgs.length - 1;
-          if (lastIndex >= 0 && nextMsgs[lastIndex].role === "assistant") {
-            nextMsgs[lastIndex] = { role: "assistant", content: accumulatedContent };
+          while (newlineIndex !== -1) {
+            const line = streamBuffer.substring(0, newlineIndex).trim();
+            streamBuffer = streamBuffer.substring(newlineIndex + 1);
+            newlineIndex = streamBuffer.indexOf("\n");
+
+            if (line.startsWith("data: ")) {
+              try {
+                const data = JSON.parse(line.substring(6));
+                if (data.text) {
+                  setChatMessages(prev => {
+                    if (prev.length === 0) return prev;
+                    const updated = [...prev];
+                    const lastIdx = updated.length - 1;
+                    if (updated[lastIdx].role === "assistant") {
+                      updated[lastIdx] = {
+                        ...updated[lastIdx],
+                        content: updated[lastIdx].content + data.text
+                      };
+                    }
+                    return updated;
+                  });
+                }
+              } catch (e) {
+                // Ignore parsing errors for cut-off lines
+              }
+            }
           }
-          return nextMsgs;
-        });
+        }
+      } else {
+        // Fallback to standard JSON parsing if not chunk-streamed
+        const data = await res.json();
+        const content = data.choices[0].message.content;
+        setChatMessages(prev => [...prev, { role: "assistant", content }]);
       }
     } catch (err) {
       console.error("Krishna AI Error:", err);
       
-      setChatMessages(prev => {
-        const nextMsgs = [...prev];
-        const lastIndex = nextMsgs.length - 1;
-        if (lastIndex >= 0 && nextMsgs[lastIndex].role === "assistant") {
-          const currentContent = nextMsgs[lastIndex].content;
-          nextMsgs[lastIndex] = {
-            role: "assistant",
-            content: currentContent 
-              ? currentContent + "\n\n*(The divine connection was interrupted.)*"
-              : "My dear seeker, I am unable to connect with your seeking soul at this moment due to a temporary connection lapse. Please raise your query again, and let us steady our minds."
-          };
-          return nextMsgs;
-        } else {
-          return [
-            ...prev,
-            {
-              role: "assistant",
-              content: "My dear seeker, I am unable to connect with your seeking soul at this moment due to a temporary connection lapse. Please raise your query again, and let us steady our minds."
-            }
-          ];
+      setChatMessages(prev => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "I am unable to speak right now as My divine portal is temporarily offline or experiencing connection issues. O seeker, please verify that your `NVIDIA_API_KEY` is correctly set in your AI Studio environment settings, and try again in an instant."
         }
-      });
+      ]);
     } finally {
       setChatLoading(false);
-      setIsStreaming(false);
     }
   };
 
@@ -3121,7 +3137,10 @@ export default function App() {
                 </div>
 
                 {/* Messages Panel Panel */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+                <div 
+                  ref={chatScrollContainerRef}
+                  className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
+                >
                   {chatMessages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center min-h-[220px] text-center p-6 space-y-4">
                       <div className="w-14 h-14 rounded-full bg-amber-600/10 dark:bg-amber-400/10 flex items-center justify-center text-3xl">👑</div>
@@ -3145,12 +3164,7 @@ export default function App() {
                               : "bg-white dark:bg-[#2c1b12]/50 text-stone-800 dark:text-stone-100 border border-amber-200/50 dark:border-amber-900/30 rounded-bl-none max-w-[85%] shadow-2xs whitespace-pre-line"
                           }`}
                         >
-                          {msg.role === "user" 
-                            ? msg.content 
-                            : (index === chatMessages.length - 1 && isStreaming 
-                                ? msg.content 
-                                : <Translate text={msg.content} />
-                              )}
+                          {msg.role === "user" ? msg.content : <Translate text={msg.content} isStreaming={chatLoading && index === chatMessages.length - 1} />}
                         </div>
                         <span className="text-[9px] text-stone-400 dark:text-stone-500 mt-1 px-1 font-serif">
                           {msg.role === "user" ? <Translate text="You (Seeker)" /> : <Translate text="Lord Krishna" />}

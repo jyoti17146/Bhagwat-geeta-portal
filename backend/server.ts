@@ -272,7 +272,7 @@ ${text}`;
   }
 });
 
-// Krishna Chat AI Counselling Endpoint (with real-time streaming)
+// Krishna Chat AI Counselling Endpoint
 app.post("/api/chat", async (req, res) => {
   try {
     const { messages } = req.body;
@@ -291,66 +291,124 @@ Guidelines for your response:
 4. You MUST cite or reference at least one relevant verse/shlok from Shrimad Bhagavad Gita (e.g., Chapter 2's Lordly message / Verse 47, Chapter 6 Verse 5, Chapter 18 Verse 66, etc.) and explain its message as it applies to their specific query.
 5. Remind them of their duties (Svadharma), right action without fruits (Nishkama Karma), and steadying the turbulent mind. Assure them that they are never alone, that you reside in their very heart, and that they will overcome this temporary illusion.`;
 
-    const geminiKey = process.env.GEMINI_API_KEY;
-    if (!geminiKey) {
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.write("My dear seeker, the divine channels are silent at this moment. Let us pause, quieten our thoughts, and seek guidance again shortly.");
-      res.end();
-      return;
+    const apiKey = process.env.NVIDIA_API_KEY;
+    if (apiKey) {
+      try {
+        const formattedMessages = messages
+          .filter((m: any) => m.role === "user" || m.role === "assistant")
+          .map((m: any) => ({
+            role: m.role,
+            content: m.content
+          }));
+
+        const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: "meta/llama-3.1-70b-instruct",
+            messages: [
+              { role: "system", content: systemPrompt },
+              ...formattedMessages
+            ],
+            temperature: 0.7,
+            max_tokens: 2048,
+            stream: true
+          })
+        });
+
+        if (response.ok) {
+          res.setHeader("Content-Type", "text/event-stream");
+          res.setHeader("Cache-Control", "no-cache");
+          res.setHeader("Connection", "keep-alive");
+
+          const reader = response.body;
+          if (reader) {
+            let buffer = "";
+            for await (const chunk of reader as any) {
+              buffer += chunk.toString("utf-8");
+              let boundary = buffer.indexOf("\n");
+              while (boundary !== -1) {
+                const line = buffer.substring(0, boundary).trim();
+                buffer = buffer.substring(boundary + 1);
+                boundary = buffer.indexOf("\n");
+
+                if (!line) continue;
+                if (line === "data: [DONE]") continue;
+
+                if (line.startsWith("data: ")) {
+                  try {
+                    const jsonStr = line.slice(6);
+                    const parsed = JSON.parse(jsonStr);
+                    const delta = parsed.choices?.[0]?.delta?.content;
+                    if (delta) {
+                      res.write(`data: ${JSON.stringify({ text: delta })}\n\n`);
+                    }
+                  } catch (e) {
+                    // Ignore parsing error for cut off lines
+                  }
+                }
+              }
+            }
+          }
+          res.end();
+          return;
+        }
+      } catch (apiError: any) {
+        console.error("NVIDIA streaming failed in standalone:", apiError);
+      }
     }
 
-    const { GoogleGenAI } = await import("@google/genai");
-    const ai = new GoogleGenAI({ 
-      apiKey: geminiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build'
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (geminiKey) {
+      try {
+        const { GoogleGenAI } = await import("@google/genai");
+        const ai = new GoogleGenAI({ apiKey: geminiKey });
+        
+        const messageHistory = messages
+          .filter((m: any) => m.role === "user" || m.role === "assistant")
+          .map((m: any) => `${m.role === "user" ? "Seeker" : "Lord Krishna"}: ${m.content}`)
+          .join("\n\n");
+
+        const promptText = `Divine Instructions for your character Roleplay:\n${systemPrompt}\n\nExisting dialogue history:\n${messageHistory}\n\nDeliver your divine guidance directly addressing the last query as Lord Krishna:`;
+
+        const responseStream = await ai.models.generateContentStream({
+          model: "gemini-2.5-flash",
+          contents: promptText,
+          config: {
+            temperature: 0.7,
+            maxOutputTokens: 2048,
+          }
+        });
+
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+
+        for await (const chunk of responseStream) {
+          const textChunk = chunk.text;
+          if (textChunk) {
+            res.write(`data: ${JSON.stringify({ text: textChunk })}\n\n`);
+          }
         }
+        res.end();
+        return;
+      } catch (geminiError) {
+        console.error("Gemini streaming failed in standalone:", geminiError);
       }
-    });
-    
-    const messageHistory = messages
-      .filter((m: any) => m.role === "user" || m.role === "assistant")
-      .map((m: any) => `${m.role === "user" ? "Seeker" : "Lord Krishna"}: ${m.content}`)
-      .join("\n\n");
+    }
 
-    const promptText = `Divine Instructions for your character Roleplay:\n${systemPrompt}\n\nExisting dialogue history:\n${messageHistory}\n\nDeliver your divine guidance directly addressing the last query as Lord Krishna:`;
-
-    // Set headers for streaming text raw to client
-    res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    res.setHeader("Transfer-Encoding", "chunked");
+    // Standard fallback response streamed to match streaming protocol perfectly
+    res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
-
-    try {
-      const streamResponse = await ai.models.generateContentStream({
-        model: "gemini-3.5-flash",
-        contents: promptText,
-        config: {
-          temperature: 0.7,
-          maxOutputTokens: 2048,
-        }
-      });
-
-      for await (const chunk of streamResponse) {
-        const text = chunk.text;
-        if (text) {
-          res.write(text);
-        }
-      }
-      res.end();
-    } catch (streamError) {
-      console.error("Gemini stream error in standalone:", streamError);
-      res.write("\n*(O seeker, a ripple in the ether has interrupted our connection. Please try again.)*");
-      res.end();
-    }
+    const fallbackMsg = "O seeker, My words are momentarily silent as My validation keys are missing. Please ensure GEMINI_API_KEY or NVIDIA_API_KEY is configured correctly in the Render Environment Variables setup.";
+    res.write(`data: ${JSON.stringify({ text: fallbackMsg })}\n\n`);
+    res.end();
   } catch (error: any) {
-    console.error("Express /api/chat error in standalone:", error);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Internal Server Error", details: error.message });
-    } else {
-      res.end();
-    }
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 });
 

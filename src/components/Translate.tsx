@@ -122,6 +122,7 @@ export interface TranslateProps {
   as?: any;
   html?: boolean;
   typewrite?: boolean;
+  isStreaming?: boolean;
 }
 
 // Queues of texts to translate, keyed by language.
@@ -282,7 +283,8 @@ export const Translate: React.FC<TranslateProps> = ({
   className = "",
   as: Component = "span",
   html = false,
-  typewrite = false
+  typewrite = false,
+  isStreaming = false
 }) => {
   const [translatedText, setTranslatedText] = useState<string>(text);
   const [typewrittenText, setTypewrittenText] = useState<string>("");
@@ -346,7 +348,7 @@ export const Translate: React.FC<TranslateProps> = ({
       return;
     }
 
-    if (activeLang === "en") {
+    if (activeLang === "en" || isStreaming) {
       setTranslatedText(text);
       return;
     }
@@ -407,7 +409,7 @@ export const Translate: React.FC<TranslateProps> = ({
     return () => {
       active = false;
     };
-  }, [text, activeLang]);
+  }, [text, activeLang, isStreaming]);
 
   if (html) {
     return (
