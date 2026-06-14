@@ -73,14 +73,21 @@ export const LanguageSelector: React.FC = () => {
   const [pollSystem, setPollSystem] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const setTranslationCookie = (langCode: string) => {
+    const value = langCode === "en" ? "" : `/en/${langCode}`;
+    const expires = langCode === "en" ? "Thu, 01 Jan 1970 00:00:00 UTC" : "";
+    
+    document.cookie = `googtrans=${value}; path=/;${expires ? ` expires=${expires};` : ""}`;
+    document.cookie = `googtrans=${value}; path=/; domain=${window.location.hostname};${expires ? ` expires=${expires};` : ""}`;
+  };
+
   // Read saved language preference or default to English
   useEffect(() => {
     const saved = localStorage.getItem("gita_preferred_lang") || "en";
     setActiveLang(saved);
-    if (saved !== "en") {
-      loadGoogleTranslate();
-      setPollSystem(true);
-    }
+    setTranslationCookie(saved);
+    // Start polling automatically to apply translation dynamically as soon as Google's engine is ready
+    setPollSystem(true);
   }, []);
 
   // Poll for Google Translate selection element readiness when requested
@@ -93,17 +100,17 @@ export const LanguageSelector: React.FC = () => {
       const selectEl = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
       if (selectEl) {
         setIsTranslateReady(true);
-        // If there is a saved language prefered, automatically apply it
         const saved = localStorage.getItem("gita_preferred_lang") || "en";
-        if (saved !== "en") {
-          applyLanguageChange(saved);
+        // Directly select and dispatch translation change event without reload
+        if (selectEl.value !== saved) {
+          selectEl.value = saved;
+          selectEl.dispatchEvent(new Event("change"));
         }
         clearInterval(interval);
-      } else if (attempts > 30) {
-        // Stop polling after 15 seconds to save CPU cycle resources
+      } else if (attempts > 50) {
         clearInterval(interval);
       }
-    }, 500);
+    }, 300);
 
     return () => clearInterval(interval);
   }, [pollSystem]);
@@ -120,46 +127,30 @@ export const LanguageSelector: React.FC = () => {
   }, []);
 
   const applyLanguageChange = (langCode: string) => {
+    setActiveLang(langCode);
+    localStorage.setItem("gita_preferred_lang", langCode);
+    setTranslationCookie(langCode);
+
+    // Dispatch custom event so that our dynamic Translate component triggers re-translation instantly across pages
+    window.dispatchEvent(new Event("gita-language-change"));
+
+    // Clean inline translation triggering (avoids any state reload)
     const selectEl = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
     if (selectEl) {
       selectEl.value = langCode;
       selectEl.dispatchEvent(new Event("change"));
-      
-      // Update our reactive frontend state
-      setActiveLang(langCode);
-      localStorage.setItem("gita_preferred_lang", langCode);
     } else {
-      setActiveLang(langCode);
-      localStorage.setItem("gita_preferred_lang", langCode);
-      loadGoogleTranslate();
+      // If the engine isn't ready yet, turn on the poll handler
       setPollSystem(true);
     }
   };
 
   const handleSelect = (lang: Language) => {
-    if (lang.code === "en") {
-      setActiveLang("en");
-      localStorage.setItem("gita_preferred_lang", "en");
-      
-      // Clear Google translation cookie if present
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
-      
-      // Fresh clean reload to completely restore pristine layout from Google Translate Mutations
-      setTimeout(() => {
-        window.location.reload();
-      }, 150);
-    } else {
-      applyLanguageChange(lang.code);
-    }
+    applyLanguageChange(lang.code);
     setIsOpen(false);
   };
 
   const handleToggleOpen = () => {
-    if (!isOpen) {
-      loadGoogleTranslate();
-      setPollSystem(true);
-    }
     setIsOpen(!isOpen);
   };
 

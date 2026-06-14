@@ -27,6 +27,7 @@ import {
 import { Verse } from "./types";
 import { LegendAvatar } from "./components/LegendAvatar";
 import { LanguageSelector } from "./components/LanguageSelector";
+import { Translate, useTranslate } from "./components/Translate";
 import { 
   BookOpen, 
   Search, 
@@ -54,6 +55,7 @@ import {
 } from "lucide-react";
 
 export default function App() {
+  const { translate } = useTranslate();
   // Theme state
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("theme");
@@ -86,7 +88,7 @@ export default function App() {
   const [activeLegendIndex, setActiveLegendIndex] = useState<number | null>(null);
 
   // Family Tree active tab ("flow" - Unified Map, "bento" - Generations list, "search" - Relation Finder)
-  const [familyTreeTab, setFamilyTreeTab] = useState<"flow" | "bento" | "search">("flow");
+  const [familyTreeTab, setFamilyTreeTab] = useState<"flow" | "bento" | "search">("bento");
   const [familyTreeSearchQuery, setFamilyTreeSearchQuery] = useState<string>("");
   const [existingLocalImages, setExistingLocalImages] = useState<string[]>([]);
   const [imageInsertCounter, setImageInsertCounter] = useState<number>(0);
@@ -607,12 +609,12 @@ export default function App() {
                   </div>
                 )}
 
-                <div className="space-y-3">
+                 <div className="space-y-3">
                   <div className="relative">
                     <Mail className="absolute left-3 top-3.5 w-4 h-4 text-amber-800/60 dark:text-amber-400/60" />
                     <input 
                       type="email" 
-                      placeholder="Your Email" 
+                      placeholder={translate("Your Email")} 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full py-3 pl-10 pr-4 bg-[#fcf9f2] dark:bg-[#2c1b12] text-gray-900 dark:text-stone-100 rounded-xl border border-amber-900/20 focus:outline-none focus:border-amber-500 text-sm"
@@ -623,7 +625,7 @@ export default function App() {
                     <Lock className="absolute left-3 top-3.5 w-4 h-4 text-amber-800/60 dark:text-amber-400/60" />
                     <input 
                       type="password" 
-                      placeholder="Secret Password" 
+                      placeholder={translate("Secret Password")} 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full py-3 pl-10 pr-4 bg-[#fcf9f2] dark:bg-[#2c1b12] text-gray-900 dark:text-stone-100 rounded-xl border border-amber-900/20 focus:outline-none focus:border-amber-500 text-sm"
@@ -709,9 +711,6 @@ export default function App() {
                   <span className="hidden sm:inline">MENU</span>
                 </button>
 
-                {/* Live Google Translate Element (hidden cleanly in background) */}
-                <div id="google_translate_element" className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden"></div>
-                
                 {/* Custom layout language selector */}
                 <LanguageSelector />
               </div>
@@ -816,17 +815,14 @@ export default function App() {
                   style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=1470&auto=format&fit=crop')` }}>
             <div className="max-w-4xl mx-auto space-y-6 px-4 z-10">
               <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-[#ffd700] drop-shadow-lg leading-tight uppercase tracking-wide">
-                Shrimad Bhagavad Gita
+                <Translate text="Shrimad Bhagavad Gita" />
               </h1>
               <h2 className="text-stone-300 text-lg sm:text-2xl md:text-3xl font-light tracking-[4px] uppercase select-none">
-                The Divine Song of God
+                <Translate text="The Divine Song of God" />
               </h2>
               <div className="h-[3px] w-[180px] bg-[#ffd700] mx-auto rounded-full shadow-lg" />
-              <p className="text-stone-100 text-sm sm:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-md">
-                The Bhagavad Gita is a 700-verse Hindu scripture that is part of the epic Mahabharata. 
-                Set on the battlefield of Kurukshetra, it captures the timeless dialogue between 
-                Prince Arjuna and Lord Krishna, offering profound wisdom on duty, righteousness (Dharma), 
-                and the path to self-realization.
+              <p className="text-stone-100 text-sm sm:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-md font-sans">
+                <Translate text="The Bhagavad Gita is a 700-verse Hindu scripture that is part of the epic Mahabharata. Set on the battlefield of Kurukshetra, it captures the timeless dialogue between Prince Arjuna and Lord Krishna, offering profound wisdom on duty, righteousness (Dharma), and the path to self-realization." />
               </p>
               
               <div className="pt-6">
@@ -837,7 +833,7 @@ export default function App() {
                   }}
                   className="px-8 py-4 bg-[#ffd700] text-stone-900 border-none rounded-full font-bold text-base cursor-pointer shadow-lg hover:bg-white hover:scale-105 active:scale-95 transition-all"
                 >
-                  Begin the Journey &rarr;
+                  <Translate text="Begin the Journey" /> &rarr;
                 </button>
               </div>
             </div>
@@ -870,7 +866,7 @@ export default function App() {
               
               <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-[#8b4513] to-[#b8860b] text-[#ffd700] px-8 py-2.5 rounded-full font-serif text-sm font-bold uppercase tracking-widest shadow-md">
-                  Verse Of The Day
+                  <Translate text="Verse Of The Day" />
                 </span>
               </div>
 
@@ -884,20 +880,22 @@ export default function App() {
                     {dailyVerse.sanskrit}
                   </blockquote>
                   <p className="text-gray-600 dark:text-stone-300 italic text-base sm:text-lg max-w-4xl mx-auto leading-relaxed">
-                    "{dailyVerse.translation}"
+                    "<Translate text={dailyVerse.translation} />"
                   </p>
                   
                   <div className="border-t border-gray-100 dark:border-stone-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <span className="font-bold text-amber-800 dark:text-amber-400 tracking-wider">
-                      Bhagavad Gita {dailyVerse.chapter}.{dailyVerse.verse}
+                      <Translate text="Bhagavad Gita" /> {dailyVerse.chapter}.{dailyVerse.verse}
                     </span>
                     <span className="text-xs text-amber-700 dark:text-amber-300 font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-1 uppercase tracking-wider">
-                      Tap to read full purport & commentary &rarr;
+                      <Translate text="Tap to read full purport & commentary" /> &rarr;
                     </span>
                   </div>
                 </div>
               ) : (
-                <p className="text-center text-stone-500 py-8">Fetching dynamic verses...</p>
+                <p className="text-center text-stone-500 py-8">
+                  <Translate text="Fetching dynamic verses..." />
+                </p>
               )}
             </div>
           </section>
@@ -907,7 +905,7 @@ export default function App() {
             <div className="p-6 sm:p-12 md:p-16 bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] flex flex-col items-center">
               
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-8 select-none">
-                THE DIVINE AUTHORS
+                <Translate text="THE DIVINE AUTHORS" />
               </h2>
 
               {/* Main illustration placeholder box */}
@@ -923,19 +921,19 @@ export default function App() {
               </div>
 
               {/* Dual Authors Vertical Flex Card */}
-              <div className="flex flex-col items-center gap-7 w-full">
+              <div className="flex flex-col items-center gap-7 w-full font-sans">
                 
                 {/* Vyasa Card */}
                 <div className="bg-white dark:bg-[#1b0f0a]/50 border border-amber-200 dark:border-amber-800/60 p-6 sm:p-10 rounded-2xl shadow-sm w-full hover:border-amber-400 transition-all duration-300">
                   <div className="text-center space-y-3">
                     <h3 className="font-serif text-xl sm:text-2xl text-[#8b4513] dark:text-amber-200 uppercase tracking-widest">
-                      MAHARISHI VED VYASA
+                      <Translate text="MAHARISHI VED VYASA" />
                     </h3>
                     <div className="text-[10px] uppercase font-bold text-[#8b4513] dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30 border border-[#deb887] rounded-sm px-3 py-0.5 tracking-widest inline-block">
-                      THE COMPILER
+                      <Translate text="THE COMPILER" />
                     </div>
-                    <p className="text-center leading-relaxed text-stone-700 dark:text-stone-300 text-xs sm:text-sm font-sans">
-                      Maharishi Ved Vyasa, born as <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Krishna Dvaipayana</span>, was the son of Sage <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Parashara</span> and <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Satyavati</span>. He is regarded as a <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Chiranjivi</span> and the architect of Vedic knowledge. He classified the Vedas into four and authored the Mahabharata. Uniquely, he was both the <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">grandfather</span> of the Pandavas and Kauravas and the narrator of their story. He dictated the epic to <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Lord Ganesha</span> and granted <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">divine vision</span> to Sanjaya. His presence ensured the preservation of <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Dharma</span> for future generations.
+                    <p className="text-center leading-relaxed text-stone-700 dark:text-stone-300 text-xs sm:text-sm">
+                      <Translate text="Maharishi Ved Vyasa, born as Krishna Dvaipayana, was the son of Sage Parashara and Satyavati. He is regarded as a Chiranjivi and the architect of Vedic knowledge. He classified the Vedas into four and authored the Mahabharata. Uniquely, he was both the grandfather of the Pandavas and Kauravas and the narrator of their story. He dictated the epic to Lord Ganesha and granted divine vision to Sanjaya. His presence ensured the preservation of Dharma for future generations." />
                     </p>
                   </div>
                 </div>
@@ -944,13 +942,13 @@ export default function App() {
                 <div className="bg-white dark:bg-[#1b0f0a]/50 border border-amber-200 dark:border-amber-800/60 p-6 sm:p-10 rounded-2xl shadow-sm w-full hover:border-amber-400 transition-all duration-300">
                   <div className="text-center space-y-3">
                     <h3 className="font-serif text-xl sm:text-2xl text-[#8b4513] dark:text-amber-200 uppercase tracking-widest">
-                      LORD GANESHA
+                      <Translate text="LORD GANESHA" />
                     </h3>
                     <div className="text-[10px] uppercase font-bold text-[#8b4513] dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30 border border-[#deb887] rounded-sm px-3 py-0.5 tracking-widest inline-block">
-                      THE DIVINE SCRIBE
+                      <Translate text="THE DIVINE SCRIBE" />
                     </div>
-                    <p className="text-center leading-relaxed text-stone-700 dark:text-stone-300 text-xs sm:text-sm font-sans">
-                      Lord Ganesha, the son of <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Lord Shiva</span> and <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Goddess Parvati</span>, is revered as the <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Vighnaharta</span> or remover of obstacles and the patron of <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">Intellect and wisdom</span>. In the context of the Mahabharata, he played the indispensable role of the <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">divine scribe</span>. When Sage Ved Vyasa conceived the vast epic, he required a writer capable of matching his depth. Ganesha accepted on the condition that Vyasa would not pause. To fulfill this, he broke his own <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">tusk</span> to use as a stylus, symbolizing sacrifice for sacred knowledge. His role transformed the epic from <span className="bg-[#fff9db] dark:bg-amber-950/50 text-[#8b4513] dark:text-[#ffd700] px-1.5 py-0.5 rounded-md font-semibold">oral tradition</span> into a timeless written masterpiece.
+                    <p className="text-center leading-relaxed text-stone-700 dark:text-stone-300 text-xs sm:text-sm">
+                      <Translate text="Lord Ganesha, the son of Lord Shiva and Goddess Parvati, is revered as the Vighnaharta or remover of obstacles and the patron of Intellect and wisdom. In the context of the Mahabharata, he played the indispensable role of the divine scribe. When Sage Ved Vyasa conceived the vast epic, he required a writer capable of matching his depth. Ganesha accepted on the condition that Vyasa would not pause. To fulfill this, he broke his own tusk to use as a stylus, symbolizing sacrifice for sacred knowledge. His role transformed the epic from oral tradition into a timeless written masterpiece." />
                     </p>
                   </div>
                 </div>
@@ -964,10 +962,10 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4 overflow-hidden" id="benefit-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                Who is the Gita For?
+                <Translate text="Who is the Gita For?" />
               </h2>
               <p className="text-center text-stone-600 dark:text-stone-300 italic text-sm sm:text-base mb-8">
-                A universal manual providing 5,000 years of wisdom for modern challenges.
+                <Translate text="A universal manual providing 5,000 years of wisdom for modern challenges." />
               </p>
 
               {/* Swipeable Scroll container with custom cards */}
@@ -978,9 +976,11 @@ export default function App() {
                     className="bg-white dark:bg-[#1b0f0a]/50 w-[270px] shrink-0 border border-amber-200 dark:border-amber-800 p-6 rounded-2xl shadow-sm hover:border-amber-400 hover:-translate-y-2 select-none snap-center transition-all duration-300 flex flex-col items-center justify-between text-center aspect-square"
                   >
                     <div className="text-4xl mb-2">{card.icon}</div>
-                    <h4 className="font-serif text-amber-900 dark:text-amber-200 text-base font-bold">{card.title}</h4>
+                    <h4 className="font-serif text-amber-900 dark:text-amber-200 text-base font-bold">
+                      <Translate text={card.title} />
+                    </h4>
                     <p className="text-xs text-gray-700 dark:text-stone-300 leading-relaxed max-w-[240px]">
-                      {card.desc}
+                      <Translate text={card.desc} />
                     </p>
                   </div>
                 ))}
@@ -988,7 +988,7 @@ export default function App() {
               
               {/* Guide hint */}
               <div className="text-center text-xs text-amber-800/80 dark:text-stone-400/80 animate-pulse mt-4">
-                &larr; Drag or scroll horizontally to see all profiles &rarr;
+                &larr; <Translate text="Drag or scroll horizontally to see all profiles" /> &rarr;
               </div>
             </div>
           </section>
@@ -997,10 +997,10 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4" id="global-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                Gita Around the World
+                <Translate text="Gita Around the World" />
               </h2>
               <p className="text-center text-stone-600 dark:text-stone-400 mb-12 italic text-sm">
-                How the world's greatest minds found inspiration in the Divine Song.
+                <Translate text="How the world's greatest minds found inspiration in the Divine Song." />
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1010,11 +1010,15 @@ export default function App() {
                     className="bg-white dark:bg-[#1b0f0a]/50 p-8 rounded-2xl border border-amber-200 dark:border-amber-800 shadow-sm flex flex-col justify-between hover:border-amber-400 transition-all duration-300"
                   >
                     <p className="text-sm italic text-[#5d4037] dark:text-stone-200 leading-relaxed mb-6">
-                      {card.quote}
+                      <Translate text={card.quote} />
                     </p>
                     <div className="border-t border-amber-900/10 dark:border-amber-500/10 pt-4 flex flex-col">
-                      <span className="font-serif text-amber-900 dark:text-amber-200 font-bold text-base">{card.name}</span>
-                      <span className="text-xs text-amber-700/80 dark:text-amber-400/80 uppercase font-semibold tracking-wider">{card.profession}</span>
+                      <span className="font-serif text-amber-900 dark:text-amber-200 font-bold text-base">
+                        <Translate text={card.name} />
+                      </span>
+                      <span className="text-xs text-amber-700/80 dark:text-amber-400/80 uppercase font-semibold tracking-wider">
+                        <Translate text={card.profession} />
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -1026,13 +1030,13 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4 text-center" id="legends-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 rounded-3xl p-10 md:p-14 shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400 space-y-6">
               <span className="inline-block px-4 py-1.5 bg-amber-800 text-stone-100 rounded-full font-serif text-xs uppercase tracking-widest font-bold">
-                Chronicles of Dharma
+                <Translate text="Chronicles of Dharma" />
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] select-none">
-                Legends of Mahabharat
+                <Translate text="Legends of Mahabharat" />
               </h2>
               <p className="text-stone-600 dark:text-stone-300 max-w-2xl mx-auto leading-relaxed text-sm sm:text-base">
-                Explore the profiles, origins, and critical roles of the 20 legendary souls who shaped the battle of Kurukshetra. Meet friends, foes, sages, and warriors under the divine guidance of Lord Krishna.
+                <Translate text="Explore the profiles, origins, and critical roles of the 20 legendary souls who shaped the battle of Kurukshetra. Meet friends, foes, sages, and warriors under the divine guidance of Lord Krishna." />
               </p>
               
               <div className="pt-4">
@@ -1044,7 +1048,7 @@ export default function App() {
                   }}
                   className="px-8 py-3.5 bg-[#8b4513] text-amber-200 dark:bg-amber-700 hover:bg-[#5d4037] hover:text-white font-bold rounded-full cursor-pointer shadow-md transition-all uppercase tracking-widest text-sm"
                 >
-                  Enter the Legends Portal &rarr;
+                  <Translate text="Enter the Legends Portal" /> &rarr;
                 </button>
               </div>
             </div>
@@ -1059,19 +1063,19 @@ export default function App() {
               {/* Header block */}
               <div className="text-center space-y-4 mb-8">
                 <span className="inline-block px-4 py-1.5 bg-amber-800 text-stone-100 rounded-full font-serif text-xs uppercase tracking-widest font-bold">
-                  Genealogy of Dharma
+                  <Translate text="Genealogy of Dharma" />
                 </span>
                 <h2 className="font-serif text-3xl sm:text-4xl text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-wide">
-                  The Mahabharat Family Tree
+                  <Translate text="The Mahabharat Family Tree" />
                 </h2>
                 <p className="text-stone-600 dark:text-stone-300 max-w-3xl mx-auto leading-relaxed text-xs sm:text-sm">
-                  Trace the sacred lineage of Hastinapura from the grand patriarchs down to Pandavas, Kauravas, and the continuing seed of the cosmic dynasty. Click any character card to open their detailed biography inside the <strong>Legends Portal</strong>.
+                  <Translate text="Trace the sacred lineage of Hastinapura from the grand patriarchs down to Pandavas, Kauravas, and the continuing seed of the cosmic dynasty. Click any character card to open their detailed biography inside the Legends Portal." />
                 </p>
                 
                 {/* View Switcher Tabs */}
                 <div className="flex flex-wrap justify-center gap-2 pt-4">
                   {[
-                    { id: "flow", label: "🌳 Family Tree Diagram", icon: "💎" },
+                    // { id: "flow", label: "🌳 Family Tree Diagram", icon: "💎" },
                     { id: "bento", label: "🗂️ Generational Bento Rows", icon: "📑" },
                     { id: "search", label: "🔍 Character Relation Finder", icon: "🔎" },
                   ].map((tab) => (
@@ -1093,7 +1097,7 @@ export default function App() {
 
               {/* Card Rendering Helper Injector */}
               {(() => {
-                const renderTreeCard = (name: string, role: string, subtitle: string, highlight: boolean = false) => {
+                const renderTreeCard = (name: string, role: React.ReactNode, subtitle: React.ReactNode, highlight: boolean = false) => {
                   return (
                     <div 
                       onClick={() => openLegendByName(name)}
@@ -1112,14 +1116,14 @@ export default function App() {
                       </div>
                       <div className="flex-1 flex flex-col justify-center p-1.5 pt-0.5">
                         <h5 className="font-serif text-[10px] sm:text-xs font-black text-amber-955 dark:text-amber-200 group-hover:text-amber-700 dark:group-hover:text-amber-400 capitalize transition-colors truncate">
-                          {name}
+                          <Translate text={name} />
                         </h5>
-                        <p className="text-[8px] sm:text-[9px] text-[#8b4513] dark:text-amber-400/90 font-semibold truncate leading-tight">
-                          {role}
-                        </p>
-                        <p className="text-[7px] sm:text-[8px] text-stone-400 dark:text-stone-500 truncate leading-none mt-0.5">
-                          {subtitle}
-                        </p>
+                        <div className="text-[8px] sm:text-[9px] text-[#8b4513] dark:text-amber-400/90 font-semibold truncate leading-tight">
+                          {typeof role === "string" ? <Translate text={role} /> : role}
+                        </div>
+                        <div className="text-[7px] sm:text-[8px] text-stone-400 dark:text-stone-500 truncate leading-none mt-0.5">
+                          {typeof subtitle === "string" ? <Translate text={subtitle} /> : subtitle}
+                        </div>
                       </div>
                     </div>
                   );
@@ -1130,7 +1134,7 @@ export default function App() {
                     <div className="flex flex-col items-center justify-center min-w-[20px] select-none text-[8px] text-[#8b4513]/60 dark:text-amber-500/50 font-serif italic font-bold">
                       <span className="leading-none mb-0.5">❤️</span>
                       <div className="h-0.5 w-6 bg-[#deb887]/60 dark:bg-amber-900/40 flex items-center justify-center"></div>
-                      <span className="leading-none mt-0.5">{label}</span>
+                      <span className="leading-none mt-0.5"><Translate text={label} /></span>
                     </div>
                   );
                 };
@@ -2012,16 +2016,20 @@ export default function App() {
                         ].map((gen, idx) => (
                           <div key={idx} className="bg-stone-50 dark:bg-[#1a110d]/40 p-4 sm:p-6 rounded-2xl border border-amber-900/5 dark:border-amber-900/30 flex flex-col md:flex-row gap-4 items-start">
                             <div className="md:w-[220px] shrink-0 space-y-1">
-                              <h4 className="font-serif font-black text-amber-900 dark:text-amber-300 text-sm">{gen.title}</h4>
-                              <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-relaxed">{gen.desc}</p>
+                              <h4 className="font-serif font-black text-amber-900 dark:text-amber-300 text-sm">
+                                <Translate text={gen.title} />
+                              </h4>
+                              <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-relaxed">
+                                <Translate text={gen.desc} />
+                              </p>
                             </div>
                             <div className="flex-1 flex flex-wrap gap-3">
                               {gen.members.map(member => (
                                 <div key={member} className="hover:-translate-y-1 transition-transform">
                                   {renderTreeCard(
                                     member, 
-                                    member === "Vyasa" || member === "Parashara" ? "Sage" : member === "Bhishma" ? "Grand patriarch" : "Kuru Dynast",
-                                    "Click to view bio",
+                                    member === "Vyasa" || member === "Parashara" ? <Translate text="Sage" /> : member === "Bhishma" ? <Translate text="Grand patriarch" /> : <Translate text="Kuru Dynast" />,
+                                    <Translate text="Click to view bio" />,
                                     member === "Satyavati" || member === "Arjuna" || member === "Duryodhana"
                                   )}
                                 </div>
@@ -2038,7 +2046,7 @@ export default function App() {
                         
                         {/* Search & Suggestions selector */}
                         <div className="bg-stone-50 dark:bg-[#1a110d]/50 p-6 rounded-2xl border border-amber-900/10">
-                          <h4 className="text-xs font-serif font-black uppercase text-amber-905 dark:text-amber-300 mb-3 text-center tracking-wider">Select a Soul of Hastinapura to Map Relations</h4>
+                          <h4 className="text-xs font-serif font-black uppercase text-amber-905 dark:text-amber-300 mb-3 text-center tracking-wider"><Translate text="Select a Soul of Hastinapura to Map Relations" /></h4>
                           <div className="flex flex-wrap gap-2 justify-center max-h-[140px] overflow-y-auto p-1 bg-white dark:bg-[#110906] rounded-xl border border-amber-950/10">
                             {familyRelations.map((char) => (
                               <button
@@ -2047,10 +2055,10 @@ export default function App() {
                                 className={`px-2.5 py-1 text-[10px] sm:text-xs font-bold rounded-lg cursor-pointer transition-all ${
                                   familyTreeSearchQuery.toLowerCase() === char.name.toLowerCase()
                                     ? "bg-[#8b4513] text-white"
-                                    : "bg-amber-50 dark:bg-amber-950/20 hover:bg-amber-100 text-[#8b4513] dark:text-amber-300 border border-amber-900/5"
+                                    : "bg-amber-50 dark:bg-amber-955/20 hover:bg-amber-100 text-[#8b4513] dark:text-amber-300 border border-amber-900/5"
                                 }`}
                               >
-                                {char.name}
+                                <Translate text={char.name} />
                               </button>
                             ))}
                           </div>
@@ -2069,14 +2077,18 @@ export default function App() {
                                 imgClassName="w-full h-full object-cover"
                               />
                             </div>
-                            <h4 className="text-lg font-serif font-black text-[#5d3011] dark:text-[#ffd700] uppercase tracking-wide leading-tight">{activeRelation.name}</h4>
-                            <p className="text-[11px] text-stone-500 dark:text-stone-400 italic leading-snug">{activeRelation.desc}</p>
+                            <h4 className="text-lg font-serif font-black text-[#5d3011] dark:text-[#ffd700] uppercase tracking-wide leading-tight">
+                              <Translate text={activeRelation.name} />
+                            </h4>
+                            <p className="text-[11px] text-stone-500 dark:text-stone-400 italic leading-snug">
+                              <Translate text={activeRelation.desc} />
+                            </p>
                             
                             <button
                               onClick={() => openLegendByName(activeRelation.name)}
                               className="px-4 py-1.5 bg-[#8b4513] text-[#ffd700] rounded-full text-[10.5px] font-bold uppercase tracking-wider block mx-auto cursor-pointer hover:bg-stone-850"
                             >
-                              Open Portal Biography →
+                              <Translate text="Open Portal Biography" /> →
                             </button>
                           </div>
 
@@ -2086,7 +2098,9 @@ export default function App() {
                             {/* Mother and Father */}
                             <div className="grid grid-cols-2 gap-3">
                               <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
-                                <span className="text-[9px] uppercase font-bold text-stone-400 block mb-1">Father</span>
+                                <span className="text-[9px] uppercase font-bold text-stone-400 block mb-1">
+                                  <Translate text="Father" />
+                                </span>
                                 {activeRelation.father && activeRelation.father !== "Pratipa" && activeRelation.father !== "Pratipa" && familyRelations.some(c => c.name.toLowerCase() === activeRelation.father.split(" ")[0].toLowerCase()) ? (
                                   <button 
                                     onClick={() => setFamilyTreeSearchQuery(activeRelation.father.split(" ")[0])}
@@ -2100,7 +2114,9 @@ export default function App() {
                               </div>
 
                               <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
-                                <span className="text-[9px] uppercase font-bold text-stone-400 block mb-1">Mother</span>
+                                <span className="text-[9px] uppercase font-bold text-stone-400 block mb-1">
+                                  <Translate text="Mother" />
+                                </span>
                                 {activeRelation.mother && familyRelations.some(c => c.name.toLowerCase() === activeRelation.mother.split(" ")[0].toLowerCase()) ? (
                                   <button 
                                     onClick={() => setFamilyTreeSearchQuery(activeRelation.mother.split(" ")[0])}
@@ -2116,7 +2132,9 @@ export default function App() {
 
                             {/* Spouses List */}
                             <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
-                              <span className="text-[9px] uppercase font-bold text-stone-400 block mb-2">Spouse(s) / Partners</span>
+                              <span className="text-[9px] uppercase font-bold text-stone-400 block mb-2">
+                                <Translate text="Spouse(s) / Partners" />
+                              </span>
                               {activeRelation.spouses.length > 0 ? (
                                 <div className="flex flex-wrap gap-2">
                                   {activeRelation.spouses.map((spouse) => (
@@ -2130,18 +2148,22 @@ export default function App() {
                                       }}
                                       className="px-2 py-1 bg-amber-50 dark:bg-amber-955/30 border border-amber-950/10 text-[#8b4513] dark:text-amber-250 rounded-lg text-xs font-black cursor-pointer hover:bg-amber-100"
                                     >
-                                      ❤️ {spouse} ➜
+                                      ❤️ <Translate text={spouse} /> ➜
                                     </button>
                                   ))}
                                 </div>
                               ) : (
-                                <span className="text-xs italic text-stone-400 block pb-1">Unmarried / Solitary Journey</span>
+                                <span className="text-xs italic text-stone-400 block pb-1">
+                                  <Translate text="Unmarried / Solitary Journey" />
+                                </span>
                               )}
                             </div>
 
                             {/* Children List */}
                             <div className="p-3 bg-[#fffefd] dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800 rounded-xl">
-                              <span className="text-[9px] uppercase font-bold text-stone-400 block mb-2">Children / Successor Seeds</span>
+                              <span className="text-[9px] uppercase font-bold text-stone-400 block mb-2">
+                                <Translate text="Children / Successor Seeds" />
+                              </span>
                               {activeRelation.children.length > 0 ? (
                                 <div className="flex flex-wrap gap-2">
                                   {activeRelation.children.map((child) => (
@@ -2155,12 +2177,14 @@ export default function App() {
                                       }}
                                       className="px-2 py-1 bg-emerald-50 dark:bg-emerald-955/20 border border-emerald-990/10 text-emerald-800 dark:text-emerald-400 rounded-lg text-xs font-black cursor-pointer hover:bg-emerald-100"
                                     >
-                                      🌱 {child} ➜
+                                      🌱 <Translate text={child} /> ➜
                                     </button>
                                   ))}
                                 </div>
                               ) : (
-                                <span className="text-xs italic text-stone-450 block pb-1">No biological heirs recorded on primary chart</span>
+                                <span className="text-xs italic text-stone-450 block pb-1">
+                                  <Translate text="No biological heirs recorded on primary chart" />
+                                </span>
                               )}
                             </div>
 
@@ -2185,13 +2209,13 @@ export default function App() {
               {/* Column 1 & 2: Divine Topic Search & Keyword Search results */}
               <div className="lg:col-span-2 bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-10 rounded-3xl shadow-lg hover:border-amber-400 transition-all duration-300">
                 <span className="inline-block px-3 py-1 bg-amber-950 text-amber-200 rounded-full font-serif text-[10px] uppercase tracking-widest font-bold mb-3">
-                  Topic Explorer
+                  <Translate text="Topic Explorer" />
                 </span>
                 <h3 className="font-serif text-2xl text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-wide mb-2">
-                  Divine Keyword Explorer
+                  <Translate text="Divine Keyword Explorer" />
                 </h3>
                 <p className="text-stone-600 dark:text-stone-300 text-sm mb-6">
-                  Search across all 700 verses of the Bhagavad Gita by keyword (e.g. "peace", "anger", "mind", "soul", "duty", "food") to find relevant spiritual shloks.
+                  <Translate text="Search across all 700 verses of the Bhagavad Gita by keyword (e.g. 'peace', 'anger', 'mind', 'soul', 'duty', 'food') to find relevant spiritual shloks." />
                 </p>
 
                 <form onSubmit={handleKeywordSearch} className="flex gap-2 items-center bg-[#deb887]/20 dark:bg-amber-950/20 p-2.5 rounded-full border border-[#deb887]/40 dark:border-amber-700/40 mb-8">
@@ -2199,7 +2223,7 @@ export default function App() {
                     <Search className="absolute left-4 top-3 w-4 h-4 text-amber-700 dark:text-amber-400" />
                     <input 
                       type="text" 
-                      placeholder="Type a topic: peace, anger, mind, yoga, soul..." 
+                      placeholder={translate("Type a topic: peace, anger, mind, yoga, soul...")} 
                       value={keywordQuery}
                       onChange={(e) => setKeywordQuery(e.target.value)}
                       className="w-full bg-white dark:bg-[#1b0f0a] pl-10 pr-4 py-2.5 border border-amber-900/10 rounded-full focus:outline-none focus:border-amber-500 text-sm"
@@ -2423,19 +2447,19 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4" id="chapters-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                The 18 Spiritual Chapters
+                <Translate text="The 18 Spiritual Chapters" />
               </h2>
-              <p className="text-center text-stone-600 dark:text-stone-300 mt-2 italic text-sm sm:text-base mb-8">
-                Explore the 700 verses of divine conversation
+              <p className="text-center text-stone-600 dark:text-stone-300 mt-2 italic text-sm sm:text-base mb-8 font-sans">
+                <Translate text="Explore the 700 verses of divine conversation" />
               </p>
 
               {/* Direct verse finder search input */}
-              <form onSubmit={handleDirectSearch} className="max-w-md mx-auto mb-12 flex gap-2 items-center justify-center bg-[#deb887]/20 dark:bg-amber-950/20 p-3 rounded-full border border-[#deb887]/40 dark:border-amber-700/40">
+              <form onSubmit={handleDirectSearch} className="max-w-md mx-auto mb-12 flex gap-2 items-center justify-center bg-[#deb887]/20 dark:bg-amber-950/20 p-3 rounded-full border border-[#deb887]/40 dark:border-amber-700/40 font-sans">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-2.5 w-4 h-4 text-amber-700 dark:text-amber-400" />
                   <input 
                     type="text" 
-                    placeholder="Search chapter.verse (e.g. 2.47)" 
+                    placeholder={translate("Search chapter.verse (e.g. 2.47)")} 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-white dark:bg-[#1b0f0a] pl-9 pr-4 py-2 border border-amber-900/10 rounded-full focus:outline-none focus:border-amber-500 text-xs sm:text-sm"
@@ -2445,12 +2469,12 @@ export default function App() {
                   type="submit"
                   className="px-5 py-2 bg-[#8b4513] hover:bg-[#5d4037] text-white hover:text-amber-200 font-bold rounded-full text-xs cursor-pointer transition-colors"
                 >
-                  Study
+                  <Translate text="Study" />
                 </button>
               </form>
 
               {/* Chapters list grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-sans">
                 {gitaChapters.map((chap) => (
                   <div 
                     key={chap.num}
@@ -2459,14 +2483,14 @@ export default function App() {
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#8b4513] dark:bg-amber-700 group-hover:bg-[#ffd700]" />
                     <div className="flex justify-between text-xs text-stone-500 dark:text-stone-400 group-hover:text-amber-300 font-semibold">
-                      <span>CHAPTER {chap.num}</span>
-                      <span>{chap.verses} VERSES</span>
+                      <span><Translate text="Chapter" /> {chap.num}</span>
+                      <span>{chap.verses} <Translate text="Verses" /></span>
                     </div>
                     <h3 className="font-serif text-lg text-[#8b4513] dark:text-[#ffd700] group-hover:text-white mt-3 font-extrabold">
-                      {chap.name}
+                      <Translate text={chap.name} />
                     </h3>
                     <p className="text-xs text-gray-650 dark:text-stone-300 group-hover:text-stone-200 italic mt-1 font-medium">
-                      {chap.subtitle}
+                      <Translate text={chap.subtitle} />
                     </p>
                   </div>
                 ))}
@@ -2526,10 +2550,10 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4" id="daily-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                Gita in Daily Life
+                <Translate text="Gita in Daily Life" />
               </h2>
               <p className="text-center text-stone-600 dark:text-stone-300 mt-2 mb-12 italic text-sm">
-                Practical applications of ancient Vedic guidelines for modern scenarios.
+                <Translate text="Practical applications of ancient Vedic guidelines for modern scenarios." />
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2548,9 +2572,11 @@ export default function App() {
                         <span className="text-xs text-orange-900/60 dark:text-amber-400 tracking-wider font-semibold">{item.ref}</span>
                       </div>
                       <p className="font-devanagari text-sm font-semibold text-amber-700/80 dark:text-amber-300/80">{item.shlok}</p>
-                      <h4 className="font-serif text-base font-bold text-amber-900 dark:text-amber-100">{item.title}</h4>
+                      <h4 className="font-serif text-base font-bold text-amber-900 dark:text-amber-100">
+                        <Translate text={item.title} />
+                      </h4>
                       <p className="text-sm text-gray-700 dark:text-stone-300 leading-relaxed">
-                        {item.desc}
+                        <Translate text={item.desc} />
                       </p>
                     </div>
                   </div>
@@ -2563,10 +2589,10 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4" id="podcast-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                Podcasts
+                <Translate text="Podcasts" />
               </h2>
               <p className="text-center text-stone-600 dark:text-stone-300 mt-2 mb-12 italic text-sm">
-                Modern dialogues on ancient wisdom from world-renowned speakers and commentators.
+                <Translate text="Modern dialogues on ancient wisdom from world-renowned speakers and commentators." />
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -2580,16 +2606,20 @@ export default function App() {
                   >
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-red-605 uppercase tracking-widest bg-red-105 dark:bg-red-950/50 px-2 py-0.5 rounded">YouTube</span>
+                        <span className="text-xs font-bold text-red-605 uppercase tracking-widest bg-red-105 dark:bg-red-950/50 px-2 py-0.5 rounded">
+                          <Translate text="YouTube" />
+                        </span>
                         <PlayCircle className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform" />
                       </div>
-                      <h3 className="font-serif text-sm text-[#8b4513] dark:text-[#ffd700] font-bold">{p.name}</h3>
+                      <h3 className="font-serif text-sm text-[#8b4513] dark:text-[#ffd700] font-bold">
+                        <Translate text={p.name} />
+                      </h3>
                       <p className="text-xs text-gray-650 dark:text-stone-300 line-clamp-3 leading-relaxed">
-                        {p.title}
+                        <Translate text={p.title} />
                       </p>
                     </div>
                     <span className="text-xs font-bold text-[#8b4513] dark:text-amber-400 uppercase tracking-widest pt-2 border-t border-amber-100 dark:border-amber-955 flex items-center gap-1">
-                      Watch Video <ExternalLink className="w-3 h-3" />
+                      <Translate text="Watch Video" /> <ExternalLink className="w-3 h-3" />
                     </span>
                   </a>
                 ))}
@@ -2601,10 +2631,10 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4" id="books-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                Sacred Literature
+                <Translate text="Sacred Literature" />
               </h2>
               <p className="text-center text-stone-600 dark:text-stone-300 mt-2 mb-12 italic text-sm">
-                Deepen your search with world-renowned commentaries and translations.
+                <Translate text="Deepen your search with world-renowned commentaries and translations." />
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2617,10 +2647,14 @@ export default function App() {
                       {b.cover}
                     </div>
                     <div className="space-y-2 flex-1">
-                      <span className="text-[10px] tracking-wider uppercase text-amber-800 dark:text-amber-400 font-bold">{b.author}</span>
-                      <h3 className="font-serif text-base text-[#8b4513] dark:text-[#ffd700] font-extrabold">{b.title}</h3>
+                      <span className="text-[10px] tracking-wider uppercase text-amber-800 dark:text-amber-400 font-bold">
+                        <Translate text={b.author} />
+                      </span>
+                      <h3 className="font-serif text-base text-[#8b4513] dark:text-[#ffd700] font-extrabold">
+                        <Translate text={b.title} />
+                      </h3>
                       <p className="text-xs text-gray-600 dark:text-stone-300 leading-relaxed">
-                        {b.desc}
+                        <Translate text={b.desc} />
                       </p>
                       <a 
                         href={b.url}
@@ -2628,7 +2662,7 @@ export default function App() {
                         rel="noreferrer"
                         className="inline-block pt-2 text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline flex items-center gap-1"
                       >
-                        <span>Purchase Book</span>
+                        <span><Translate text="Purchase Book" /></span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
@@ -2642,10 +2676,10 @@ export default function App() {
           <section className="max-w-[1150px] mx-auto my-24 px-4" id="faq-section">
             <div className="bg-white dark:bg-[#26160f] border-2 border-amber-300/80 dark:border-amber-700/60 p-6 sm:p-12 md:p-16 rounded-3xl shadow-[0_15px_50px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-amber-400">
               <h2 className="font-serif text-3xl sm:text-4xl text-center text-[#7c2d12] dark:text-[#ffd700] uppercase tracking-[3px] mb-2 select-none">
-                Frequently Asked Questions
+                <Translate text="Frequently Asked Questions" />
               </h2>
               <p className="text-center text-stone-600 dark:text-stone-300 mt-2 mb-12 italic text-sm">
-                Clearing common doubts and inquiries about the Shrimad Bhagavad Gita.
+                <Translate text="Clearing common doubts and inquiries about the Shrimad Bhagavad Gita." />
               </p>
 
               <div className="space-y-4 max-w-4xl mx-auto">
@@ -2658,13 +2692,13 @@ export default function App() {
                       onClick={() => setActiveFaqIndex(activeFaqIndex === idx ? null : idx)}
                       className="w-full text-left p-5 bg-white dark:bg-[#26160f] flex justify-between items-center font-bold text-[#8b4513] dark:text-amber-300 font-serif focus:outline-none cursor-pointer hover:bg-stone-100"
                     >
-                      <span>{faq.question}</span>
+                      <span><Translate text={faq.question} /></span>
                       <ChevronDown className={`w-5 h-5 text-amber-600 dark:text-amber-400 transition-transform duration-250 ${activeFaqIndex === idx ? "rotate-180" : ""}`} />
                     </button>
 
                     <div className={`overflow-hidden transition-all duration-300 ${activeFaqIndex === idx ? "max-h-[300px]" : "max-h-0"}`}>
                       <div className="p-5 bg-white dark:bg-[#1b0f0a] border-t border-amber-900/5 text-gray-700 dark:text-stone-300 text-sm leading-relaxed">
-                        {faq.answer}
+                        <Translate text={faq.answer} />
                       </div>
                     </div>
                   </div>
@@ -2756,23 +2790,25 @@ export default function App() {
                   </div>
 
                   {/* English Translation Box */}
-                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-orange-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm">
+                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-orange-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm animate-fade-in font-sans">
                     <span className="absolute -top-3 left-6 px-3 py-1 bg-amber-800 text-amber-100 rounded text-[10px] font-bold uppercase tracking-wider">
-                      English Translation
+                      <Translate text="Translation" />
                     </span>
                     <p className="text-[#4a3628] dark:text-stone-100 text-base sm:text-lg font-medium leading-relaxed">
-                      "{activeStudyVerses[activeVerseIndex].translation}"
+                      "<Translate text={activeStudyVerses[activeVerseIndex].translation} />"
                     </p>
                   </div>
 
                   {/* Detailed purports & commentary box */}
-                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-amber-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm">
+                  <div className="relative bg-white dark:bg-[#26160f] p-6 pt-8 rounded-xl border border-amber-950/20 dark:border-amber-900/50 max-w-3xl mx-auto shadow-sm animate-fade-in font-sans">
                     <span className="absolute -top-3 left-6 px-3 py-1 bg-[#8b4513] text-[#ffd700] rounded text-[10px] font-bold uppercase tracking-wider">
-                      Purport & Commentary Of Jyoti Pandey
+                      <Translate text="Purport" /> & <Translate text="Commentary" />
                     </span>
-                    <div 
-                      className="text-stone-800 dark:text-stone-200 text-sm sm:text-base leading-relaxed space-y-4"
-                      dangerouslySetInnerHTML={{ __html: activeStudyVerses[activeVerseIndex].purport }}
+                    <Translate 
+                      html={true} 
+                      text={activeStudyVerses[activeVerseIndex].purport} 
+                      className="text-stone-800 dark:text-stone-200 text-sm sm:text-base leading-relaxed space-y-4" 
+                      as="div" 
                     />
                   </div>
 
@@ -2819,14 +2855,14 @@ export default function App() {
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🏹</span>
                     <h2 className="font-serif text-[#8b4513] dark:text-[#ffd700] font-bold text-base sm:text-lg">
-                      Mahabharat — The Great Souls
+                      Mahabharat — <Translate text="The Great Souls" />
                     </h2>
                   </div>
                   <button 
                     onClick={closeLegendsPortal}
-                    className="p-1 px-4 rounded-full bg-[#8b4513] text-[#ffd700] font-bold text-xs cursor-pointer border-none hover:bg-stone-800 transition-all active:scale-95"
+                    className="p-1 px-4 rounded-full bg-[#8b4513] text-[#ffd700] font-bold text-xs cursor-pointer border-none hover:bg-stone-800 transition-all active:scale-95 flex items-center gap-1.5"
                   >
-                    ✕ Close Portal
+                    ✕ <Translate text="Close Portal" />
                   </button>
                 </div>
 
@@ -2841,9 +2877,9 @@ export default function App() {
                         onClick={() => {
                           setActiveLegendIndex(index);
                         }}
-                        className={`py-2 px-3 text-left rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap md:whitespace-normal cursor-pointer select-none transition-all border shrink-0 ${activeLegendIndex === index ? "bg-[#8b4513] text-white border-transparent" : "bg-white dark:bg-[#1b0f0a] border-stone-200 dark:border-amber-950 text-stone-800 dark:text-stone-300 hover:bg-amber-100"}`}
+                        className={`py-2 px-3 text-left rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap md:whitespace-normal cursor-pointer select-none transition-all border shrink-0 ${activeLegendIndex === index ? "bg-[#8b4513] text-white border-transparent" : "bg-white dark:bg-[#1b0f0a] border-stone-200 dark:border-amber-100 text-stone-800 dark:text-stone-300 hover:bg-amber-100"}`}
                       >
-                        {index + 1}. {legend.name}
+                        {index + 1}. <Translate text={legend.name} />
                       </button>
                     ))}
                   </div>
@@ -2865,12 +2901,12 @@ export default function App() {
                       {/* Image Insertion Form */}
                       <div className="w-full max-w-xs flex flex-col gap-1 items-center">
                         <div className="text-[10px] text-stone-500 dark:text-stone-400 font-sans">
-                          Portrait image override:
+                          <Translate text="Portrait image override:" />
                         </div>
                         <div className="flex w-full gap-1">
                           <input 
                             type="text"
-                            placeholder="Paste custom image URL here..."
+                            placeholder={translate("Paste custom image URL here...")}
                             id="custom-legend-img-input"
                             defaultValue={(() => {
                               try {
@@ -2901,21 +2937,23 @@ export default function App() {
                             }}
                             className="bg-amber-850 text-amber-200 hover:bg-amber-800 border border-amber-600/30 px-3 py-1 rounded-lg text-[11px] font-sans font-bold cursor-pointer transition-colors active:scale-95 whitespace-nowrap"
                           >
-                            Set URL
+                            <Translate text="Set URL" />
                           </button>
                         </div>
                       </div>
                     </div>
 
                     <h1 className="font-serif text-3xl font-bold text-[#8b4513] dark:text-[#ffd700] mb-2">
-                      {mahabharatLegends[activeLegendIndex].name}
+                      <Translate text={mahabharatLegends[activeLegendIndex].name} />
                     </h1>
                     <div className="h-[2px] w-24 bg-[#ffd700] mx-auto my-3" />
 
                     {/* Description with italic highlights */}
-                    <p 
-                      className="text-stone-700 dark:text-stone-200 text-sm sm:text-base leading-relaxed text-justify max-w-2xl mx-auto pt-2"
-                      dangerouslySetInnerHTML={{ __html: mahabharatLegends[activeLegendIndex].desc }}
+                    <Translate 
+                      html={true}
+                      text={mahabharatLegends[activeLegendIndex].desc}
+                      className="text-stone-700 dark:text-stone-200 text-sm sm:text-base leading-relaxed text-justify max-w-2xl mx-auto pt-2 animate-fade-in font-sans"
+                      as="div"
                     />
                   </div>
 
@@ -2928,21 +2966,21 @@ export default function App() {
                       if (activeLegendIndex > 0) setActiveLegendIndex(activeLegendIndex - 1);
                     }}
                     disabled={activeLegendIndex === 0}
-                    className="px-4 py-2 bg-amber-800 text-amber-200 rounded disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="px-4 py-2 bg-amber-800 text-amber-200 rounded disabled:opacity-30 disabled:pointer-events-none cursor-pointer flex items-center gap-1 text-xs font-bold"
                   >
-                    &larr; Prev
+                    &larr; <Translate text="Prev" />
                   </button>
                   <span className="font-serif font-black text-xs text-amber-900 dark:text-stone-200">
-                    {activeLegendIndex + 1} of {mahabharatLegends.length}
+                    {activeLegendIndex + 1} <Translate text="of" /> {mahabharatLegends.length}
                   </span>
                   <button
                     onClick={() => {
                       if (activeLegendIndex < mahabharatLegends.length - 1) setActiveLegendIndex(activeLegendIndex + 1);
                     }}
                     disabled={activeLegendIndex === mahabharatLegends.length - 1}
-                    className="px-4 py-2 bg-amber-800 text-amber-200 rounded disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="px-4 py-2 bg-amber-800 text-amber-200 rounded disabled:opacity-30 disabled:pointer-events-none cursor-pointer flex items-center gap-1 text-xs font-bold"
                   >
-                    Next &rarr;
+                    <Translate text="Next" /> &rarr;
                   </button>
                 </div>
 
@@ -2953,7 +2991,7 @@ export default function App() {
           {/* ================================================== */}
           {/* LORD KRISHNA DIVINE AI COUNSEL CHATBOT */}
           {/* ================================================== */}
-          <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
+          <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end hidden">
             
             {/* Expanded Conversation Drawer */}
             {chatOpen && (
@@ -2965,9 +3003,11 @@ export default function App() {
                     <span className="text-2xl animate-pulse">👑</span>
                     <div>
                       <h4 className="font-serif font-black tracking-wide text-sm text-[#ffd700]">
-                        DIVINE AI COUNSEL
+                        <Translate text="DIVINE AI COUNSEL" />
                       </h4>
-                      <p className="text-[10px] text-amber-200 opacity-90 font-medium">Lord Sri Krishna's Guide</p>
+                      <p className="text-[10px] text-amber-200 opacity-90 font-medium">
+                        <Translate text="Lord Sri Krishna's Guide" />
+                      </p>
                     </div>
                   </div>
                   <button 
@@ -2984,9 +3024,11 @@ export default function App() {
                   {chatMessages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center min-h-[220px] text-center p-6 space-y-4">
                       <div className="w-14 h-14 rounded-full bg-amber-600/10 dark:bg-amber-400/10 flex items-center justify-center text-3xl">👑</div>
-                      <h4 className="font-serif font-semibold text-stone-800 dark:text-amber-100 text-sm">Divine Dialogue Initiate</h4>
+                      <h4 className="font-serif font-semibold text-stone-800 dark:text-amber-100 text-sm">
+                        <Translate text="Divine Dialogue Initiate" />
+                      </h4>
                       <p className="text-xs text-stone-500 dark:text-stone-400 max-w-xs leading-relaxed">
-                        Welcome, O seeker. Reach past the boundaries of the mundane world. Ask Lord Krishna for guidance on confusion, duties, stress, or your path.
+                        <Translate text="Welcome, O seeker. Reach past the boundaries of the mundane world. Ask Lord Krishna for guidance on confusion, duties, stress, or your path." />
                       </p>
                     </div>
                   ) : (
@@ -3002,10 +3044,10 @@ export default function App() {
                               : "bg-white dark:bg-[#2c1b12]/50 text-stone-800 dark:text-stone-100 border border-amber-200/50 dark:border-amber-900/30 rounded-bl-none max-w-[85%] shadow-2xs whitespace-pre-line"
                           }`}
                         >
-                          {msg.content}
+                          {msg.role === "user" ? msg.content : <Translate text={msg.content} />}
                         </div>
                         <span className="text-[9px] text-stone-400 dark:text-stone-500 mt-1 px-1 font-serif">
-                          {msg.role === "user" ? "You (Seeker)" : "Lord Krishna"}
+                          {msg.role === "user" ? <Translate text="You (Seeker)" /> : <Translate text="Lord Krishna" />}
                         </span>
                       </div>
                     ))
@@ -3014,7 +3056,9 @@ export default function App() {
                   {chatLoading && (
                     <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-400 font-serif italic animate-pulse">
                       <span>👑</span>
-                      <span>The Lord is channeling divine consciousness...</span>
+                      <span>
+                        <Translate text="The Lord is channeling divine consciousness..." />
+                      </span>
                     </div>
                   )}
                 </div>
@@ -3033,7 +3077,7 @@ export default function App() {
                       disabled={chatLoading}
                       className="px-3 py-1.5 bg-[#f5ebe0] hover:bg-amber-100 dark:bg-[#1b0f0a] dark:hover:bg-amber-950/20 text-[#8b4513] dark:text-amber-300 border border-amber-900/10 rounded-full text-[11px] font-medium transition-colors cursor-pointer shrink-0 disabled:opacity-40"
                     >
-                      {pill}
+                      <Translate text={pill} />
                     </button>
                   ))}
                 </div>
@@ -3048,8 +3092,8 @@ export default function App() {
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     disabled={chatLoading}
-                    placeholder="Speak your mind, seeker..."
-                    className="flex-1 bg-stone-50 dark:bg-[#100906] border border-stone-200 dark:border-amber-950 rounded-full px-4 py-2 text-xs sm:text-sm focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                    placeholder={translate("Speak your mind, seeker...")}
+                    className="flex-1 bg-stone-50 dark:bg-[#100906] border border-stone-200 dark:border-amber-955 rounded-full px-4 py-2 text-xs sm:text-sm focus:outline-none focus:border-amber-500 disabled:opacity-50"
                   />
                   <button
                     type="submit"
@@ -3071,7 +3115,7 @@ export default function App() {
             >
               <Sparkles className="w-5 h-5 text-amber-200 animate-spin-slow" />
               <span className="font-serif font-black tracking-widest text-xs hidden sm:inline uppercase text-amber-100">
-                {chatOpen ? "Close Counsel" : "Krishna AI Counsel"}
+                {chatOpen ? <Translate text="Close Counsel" /> : <Translate text="Krishna AI Counsel" />}
               </span>
             </button>
 

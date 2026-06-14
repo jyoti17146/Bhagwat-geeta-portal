@@ -4,8 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bhagwat geeta</title>
+    <!-- Prevent third-party / external translation script errors from showing up in the app stream -->
+    <script type="text/javascript">
+      window.onerror = function(message, url, line, col, error) {
+        if (message && (
+          message.toLowerCase().indexOf("script error") > -1 || 
+          message.toLowerCase().indexOf("google translate") > -1 ||
+          message.indexOf("translate.google") > -1 || 
+          message.indexOf("translate.googleapis") > -1 ||
+          (url && (url.indexOf("translate.google") > -1 || url.indexOf("translate.googleapis") > -1))
+        )) {
+          console.warn("Handled and suppressed cross-origin translate script warning safely:", message);
+          return true; // Prevents the error from crashing or propagating
+        }
+        return false;
+      };
+    </script>
+    <!-- Google Translate Initialization Script -->
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'hi,en,sa,mr,gu,ta,te,kn,ml,es,fr,de',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
   </head>
   <body>
+    <!-- Hidden Google Translate Element Anchor (Positioned and layout-active, but invisible) -->
+    <div id="google_translate_element" style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; overflow: hidden; top: -100px; left: -100px;"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

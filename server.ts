@@ -44,6 +44,135 @@ async function startServer() {
     res.json({ status: "ok", mode: process.env.NODE_ENV || "development" });
   });
 
+  // Dynamic Translation Service using Gemini API
+  const LANGUAGE_MAP: Record<string, string> = {
+    hi: "Hindi",
+    sa: "Sanskrit",
+    mr: "Marathi",
+    gu: "Gujarati",
+    ta: "Tamil",
+    te: "Telugu",
+    kn: "Kannada",
+    ml: "Malayalam",
+    es: "Spanish",
+    fr: "French",
+    de: "German",
+    en: "English"
+  };
+
+  app.post("/api/translate", async (req, res) => {
+    const { text, texts, targetLang } = req.body;
+    try {
+      if (!targetLang || targetLang === "en") {
+        if (texts && Array.isArray(texts)) {
+          res.json({ translatedTexts: texts });
+        } else {
+          res.json({ translatedText: text });
+        }
+        return;
+      }
+
+      const targetLanguageName = LANGUAGE_MAP[targetLang] || targetLang;
+      const geminiKey = process.env.GEMINI_API_KEY;
+
+      if (!geminiKey) {
+        console.warn("GEMINI_API_KEY is not defined, returning original text.");
+        if (texts && Array.isArray(texts)) {
+          res.json({ translatedTexts: texts });
+        } else {
+          res.json({ translatedText: text });
+        }
+        return;
+      }
+
+      const { GoogleGenAI, Type } = await import("@google/genai");
+      const ai = new GoogleGenAI({ 
+        apiKey: geminiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build'
+          }
+        }
+      });
+
+      // Handle batch array of translations if requested
+      if (texts && Array.isArray(texts)) {
+        if (texts.length === 0) {
+          res.json({ translatedTexts: [] });
+          return;
+        }
+
+        const promptText = `You are a professional scripture scholar and accurate translation engine. 
+Translate the following list of texts into natural, clear, and contextually rich ${targetLanguageName}.
+Requirements:
+1. Keep all structural formatting, line breaks, parenthesis, numbers, and emojis exactly as-is.
+2. Do NOT translate or modify original Sanskrit words or quoted lines of verses (maintain them in Sanskrit perfectly).
+3. Return the translations strictly as a JSON array of strings matching the exact size and order of the inputs.
+
+Input array to translate:
+${JSON.stringify(texts)}`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: promptText,
+          config: {
+            temperature: 0.1,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.STRING
+              }
+            }
+          }
+        });
+
+        const responseText = response.text ? response.text.trim() : "";
+        try {
+          const translatedTexts = JSON.parse(responseText);
+          if (Array.isArray(translatedTexts) && translatedTexts.length === texts.length) {
+            res.json({ translatedTexts });
+          } else {
+            console.warn("Mismatched translated texts length. Falling back to original texts.");
+            res.json({ translatedTexts: texts });
+          }
+        } catch (jsonErr) {
+          console.error("Failed to parse batch translation response JSON:", responseText, jsonErr);
+          res.json({ translatedTexts: texts });
+        }
+        return;
+      }
+
+      // Existing single string translation fallback
+      const promptText = `You are a professional scholar translation engine for scripture. Translate the exact text provided below into natural and accurate ${targetLanguageName}.
+Keep all structural formatting, markdown bold/italic tags, line breaks, parenthesis, symbols, emoji, and original verse numbers/formulas exactly as-is. 
+Only translate the human readable text into ${targetLanguageName} - do not translate original Sanskrit quotes (keep them in Sanskrit). 
+Provide ONLY the translated result itself. Do not add any conversational remarks, intros, or "Here is the translation". 
+
+Text to translate:
+${text}`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: promptText,
+        config: {
+          temperature: 0.1,
+          maxOutputTokens: 2048,
+        }
+      });
+
+      const translatedText = response.text ? response.text.trim() : text;
+      res.json({ translatedText });
+    } catch (translateError: any) {
+      console.error("Express /api/translate error:", translateError);
+      if (texts && Array.isArray(texts)) {
+        res.json({ translatedTexts: texts });
+      } else {
+        res.json({ translatedText: text }); // Fallback to original text safely
+      }
+    }
+  });
+
   // Proxy Chat completions
   app.post("/api/chat", async (req: express.Request, res: express.Response) => {
     try {
