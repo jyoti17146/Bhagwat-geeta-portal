@@ -3,9 +3,79 @@ import path from "path";
 import dotenv from "dotenv";
 import cors from "cors";
 import fs from "fs";
+import https from "https";
 import { createServer as createViteServer } from "vite";
 
 dotenv.config();
+
+const IMAGE_FILES = [
+  "abhimanyu.jpg",
+  "arjuna.jpg",
+  "ashwathama.jpg",
+  "authors.jpg",
+  "battlefield.jpg",
+  "bheema.jpg",
+  "bhisma.jpg",
+  "dhritrastra.jpg",
+  "draupadi.jpg",
+  "dronacharya.jpg",
+  "duryodhana.jpg",
+  "gandhari.jpg",
+  "karna.jpg",
+  "kaurava.JPG",
+  "krishna.jpg",
+  "kunti.jpg",
+  "nakula.jpg",
+  "pandu.jpg",
+  "sahadeva.jpg",
+  "sanjaya.jpg",
+  "vidur.jpg",
+  "yudhisthira.jpg"
+];
+
+const downloadImage = (filename: string): Promise<void> => {
+  return new Promise((resolve) => {
+    const publicImagesDir = path.join(process.cwd(), "public", "images");
+    if (!fs.existsSync(publicImagesDir)) {
+      try {
+        fs.mkdirSync(publicImagesDir, { recursive: true });
+      } catch (err) {
+        console.error("Error creating public/images directory:", err);
+      }
+    }
+    const localPath = path.join(publicImagesDir, filename);
+
+    // If it already exists and is non-empty, skip
+    if (fs.existsSync(localPath) && fs.statSync(localPath).size > 1000) {
+      resolve();
+      return;
+    }
+
+    const url = `https://raw.githubusercontent.com/sajancodes/Bhagvat-geeta-portal/main/public/images/${filename}`;
+    const file = fs.createWriteStream(localPath);
+
+    https.get(url, (response) => {
+      if (response.statusCode === 200) {
+        response.pipe(file);
+        file.on("finish", () => {
+          file.close();
+          console.log(`Successfully downloaded ${filename}`);
+          resolve();
+        });
+      } else {
+        file.close();
+        fs.unlink(localPath, () => {});
+        console.error(`Failed to download ${filename}: status code ${response.statusCode}`);
+        resolve();
+      }
+    }).on("error", (err) => {
+      file.close();
+      fs.unlink(localPath, () => {});
+      console.error(`Error downloading ${filename}:`, err);
+      resolve();
+    });
+  });
+};
 
 async function startServer() {
   const app = express();
@@ -15,6 +85,36 @@ async function startServer() {
   app.use(cors());
 
   app.use(express.json());
+
+  // Launch background download of images
+  Promise.all(IMAGE_FILES.map(downloadImage))
+    .then(() => {
+      console.log("All background images verified/downloaded.");
+    })
+    .catch((err) => {
+      console.error("Error in background images prep:", err);
+    });
+
+  // Dynamic route to intercept and serve images (or download on the fly if missing)
+  app.get("/images/:filename", async (req, res, next) => {
+    const filename = req.params.filename;
+    const publicImagesDir = path.join(process.cwd(), "public", "images");
+    const localPath = path.join(publicImagesDir, filename);
+
+    if (fs.existsSync(localPath) && fs.statSync(localPath).size > 1000) {
+      return res.sendFile(localPath);
+    }
+
+    try {
+      await downloadImage(filename);
+      if (fs.existsSync(localPath) && fs.statSync(localPath).size > 1000) {
+        return res.sendFile(localPath);
+      }
+    } catch (err) {
+      console.error(`Dynamic download failed for ${filename}:`, err);
+    }
+    next();
+  });
 
   // API to list images that exist inside the public/images directory
   app.get("/api/existing-images", (req, res) => {
