@@ -9,6 +9,13 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const defaultOrigins = [
+  "https://bhagwat-geeta-portal.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:3000"
+];
 
 // Dynamic CORS configuration via .env
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
