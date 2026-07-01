@@ -2621,9 +2621,11 @@ export default function App() {
                   { icon: "⚖️", ref: "BG 6.17", shlok: "युक्ताहारविहारस्य युक्तचेष्टस्य कर्मसु |", title: "Healthy & Balanced Living", desc: "Yoga destroys all pain for the one who maintains balance in eating, sleeping, and working." },
                   { icon: "🌬️", ref: "BG 2.47", shlok: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन |", title: "Anxiety-Free Work", desc: "You have a right to perform your duty, but you are not entitled to the fruits of your actions." },
                   { icon: "🌊", ref: "BG 2.70", shlok: "आपूर्यमाणमचलप्रतिष्ठं समुद्रमाप: प्रविशन्ति यद्वत् |", title: "Inner Stillness", desc: "Peace comes to one who remains undisturbed by the flow of desires, like the ocean." },
-                  
-        
-                ].map((item, idx) => (
+                  { icon: "🤝", ref: "BG 3.20", shlok: "लोकसंग्रहमेवापि सम्पश्यन्कर्तुमर्हसि |", title: "Social Service", desc: "You should perform your work for the sake of the welfare and unity of the world." },
+                  { icon: "🔥", ref: "BG 2.63", shlok: "क्रोधाद्भवति सम्मोह: सम्मोहात्स्मृतिविभ्रम: |", title: "Handling Anger", desc: "From anger comes delusion; from delusion, the loss of memory and reason." },
+                  { icon: "🏔️", ref: "BG 2.14", shlok: "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदु:खदा: |", title: "Tolerance of change", desc: "Heat, cold, joy, and pain are temporary; they come and go like the seasons." },
+                  { icon: "🔥", ref: "BG 18.63", shlok: "विमृश्यैतदशेषेण यथेच्छसि तथा कुरु ||", title: "Freedom of Choice", desc: "Deliberate on this wisdom fully, and then do what you wish to do." }
+                  ].map((item, idx) => (
                   <div 
                     key={idx}
                     className="bg-white dark:bg-[#1b0f0a]/50 p-6 rounded-2xl border border-amber-200 dark:border-amber-800 flex flex-col justify-between"
