@@ -2785,8 +2785,8 @@ export default function App() {
         LinkedIn
       </a>
       <span>·</span>
-      <a href="jyoti17146.github.io/Jyoti_Pandey_Portfolio" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
-        Portfolio
+      <a href="https://jyoti17146.github.io/Jyoti_Pandey_Portfolio" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
+       Portfolio
       </a>
       <span>·</span>
       <a href="https://github.com/jyoti17146" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
