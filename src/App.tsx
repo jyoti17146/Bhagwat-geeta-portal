@@ -2765,27 +2765,40 @@ export default function App() {
             </div>
           </section>
 
-          {/* FOOTER */}
-          <footer className="bg-[#fdf5e6] dark:bg-[#110906] py-12 px-4 text-center border-t-3 border-[#8b4513] text-stone-600 dark:text-stone-400 transition-colors">
-            <div className="max-w-4xl mx-auto space-y-4">
-              <p className="text-sm">
-                Designed and Developed by:{" "}
-                <a href="#auth-main" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-bold font-serif">
-                  Jyoti Pandey
-                </a>
-              </p>
-              <p className="text-xs">
-                Send your feedback to:{" "}
-                <a href="mailto:jyoti1210486@gmail.com" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
-                  jyoti1210486@gmail.com
-                </a>
-              </p>
-              <div className="h-[1px] w-24 bg-amber-900/10 dark:bg-amber-500/10 mx-auto my-4" />
-              <p className="text-xs opacity-75">
-                &copy; {new Date().getFullYear()} Gita Portal. All rights reserved. Built with love in React and TypeScript.
-              </p>
-            </div>
-          </footer>
+{/* FOOTER */}
+<footer className="bg-[#fdf5e6] dark:bg-[#110906] py-12 px-4 text-center border-t-3 border-[#8b4513] text-stone-600 dark:text-stone-400 transition-colors">
+  <div className="max-w-4xl mx-auto space-y-4">
+    <p className="text-sm">
+      Designed & Developed by{" "}
+      <a href="#auth-main" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-bold font-serif">
+        Jyoti Pandey
+      </a>
+    </p>
+    <p className="text-xs space-x-2">
+      <a href="YOUR_PORTFOLIO_URL" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
+        Portfolio
+      </a>
+      <span>·</span>
+      <a href="https://www.linkedin.com/in/jyoti-pandey-6460a32a7" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
+        LinkedIn
+      </a>
+      <span>·</span>
+      <a href="https://github.com/jyoti17146" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
+        GitHub
+      </a>
+    </p>
+    <p className="text-xs">
+      Feedback & suggestions:{" "}
+      <a href="mailto:jyoti1210486@gmail.com" className="text-[#8b4513] dark:text-[#ffd700] hover:underline font-semibold">
+        jyoti1210486@gmail.com
+      </a>
+    </p>
+    <div className="h-[1px] w-24 bg-amber-900/10 dark:bg-amber-500/10 mx-auto my-4" />
+    <p className="text-xs opacity-75">
+      &copy; {new Date().getFullYear()} Gita Portal. All rights reserved. Built with React and TypeScript.
+    </p>
+  </div>
+</footer>
 
           {/* ================================================== */}
           {/* VERSE STUDY PORTAL OVERLAY */}
