@@ -200,9 +200,5 @@ export const mahabharatLegends: Legend[] = [
     name: "Parashara",
     desc: "Sage Parāśara was one of the greatest Vedic rishis, renowned for his profound spiritual wisdom, yogic powers, and mastery of the Vedas. He was the grandson of Sage Vashistha and is traditionally credited with composing the Vishnu Purana and the Brihat Parashara Hora Shastra, the foundational text of Vedic astrology. Parāśara occupies a vital place in the Mahabharata lineage. During his travels, he met Satyavati (then known as Matsyagandhā), and from their divine union on an island in the Yamuna was born Sage Vyasa, who later compiled the Vedas and composed the Mahabharata. Through Vyasa, Parāśara became one of the most significant ancestral figures whose lineage shaped the Kuru dynasty's next generation and the events of the Mahabharata.",
     img: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=500&q=80"
-  },
-  {
-    name: "Shakuni",
-    desc: "Shakuni was the prince of the Kingdom of Gandhara, the brother of Queen Gandhari, and the maternal uncle of Duryodhana and the Kauravas. Renowned for his exceptional intelligence, political cunning, and mastery of dice, Shakuni became the chief strategist behind the Kauravas' schemes against the Pandavas. Harboring deep resentment toward the Kuru dynasty, he skillfully manipulated Duryodhana's ambitions and orchestrated the infamous game of dice, in which Yudhishthira lost his kingdom, wealth, brothers, and Draupadi, leading to the Pandavas' exile and setting the stage for the Kurukshetra War. Throughout the conflict, Shakuni continued to advise the Kauravas through deception and strategy rather than direct combat. During the Kurukshetra War, he fought on the side of the Kauravas but was ultimately slain by Sahadeva, who fulfilled his vow to avenge the injustice inflicted upon the Pandavas. As the mastermind behind many of the Mahabharata's most pivotal events, Shakuni remains a powerful symbol of manipulation, revenge, and the destructive consequences of deceit and unchecked ambition.",
-    img: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?crop&w=500&q=80"
-];
+  }
+  ];
