@@ -73,7 +73,7 @@ export const mahabharatLegends: Legend[] = [
   },
   {
     name: "Bhishma",
-    desc: "Bhishma was the grand protector and elder of the Kurus. Son of King Shantanu and goddess <em>Ganga</em>, he took a dreadful vow of lifelong celibacy and renounced the throne. Bound by duty, he fought for the Kauravas, ultimately falling on a bed of arrows.",
+    desc: "Bhishma, born as Devavrata, was the son of King Shantanu and the river goddess Ganga. Renowned as one of the greatest warriors, statesmen, and masters of dharma, he received unparalleled education from the finest sages and warriors of his time. To fulfill his father's wish of marrying Satyavati, Devavrata took the legendary Bhishma Pratigya—a lifelong vow of celibacy and renunciation of the throne—which earned him the name 'Bhishma' and the boon of choosing the time of his own death (Ichha Mrityu). Throughout his life, he remained the unwavering guardian of the Kuru dynasty, serving successive generations of kings with absolute loyalty. During the Kurukshetra War, Bhishma fought as the first commander of the Kaurava army and remained undefeated until he voluntarily laid down his weapons before Shikhandi and Arjuna. Even while resting on a bed of arrows, he imparted profound teachings on kingship, righteousness, and duty to Yudhishthira, making him one of the most revered and influential figures in the Mahabharata.",
     img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=500&q=80"
   },
   {
@@ -103,42 +103,42 @@ export const mahabharatLegends: Legend[] = [
   },
   {
     name: "Shantanu",
-    desc: "King Shantanu was a noble ruler of the Kuru dynasty who ruled Hastinapura. He was married first to the river goddess <em>Ganga</em> (with whom he fathered Bhishma) and later to Queen <em>Satyavati</em> (with whom he fathered Chitrangada and Vichitravirya). His deep emotional decisions set the complex stage for the entire Mahabharata epic.",
+    desc: "King Shantanu was a noble and righteous ruler of the Kuru dynasty, renowned for his wisdom, valor, and unwavering commitment to dharma. He first married the river goddess Ganga, and their son was the legendary warrior Bhishma. Later, captivated by the virtues of Satyavati, Shantanu wished to marry her, leading Bhishma to take his lifelong vow of celibacy and renounce his claim to the throne. Shantanu and Satyavati became the parents of Chitrāngada and Vichitravirya, through whom the Kuru lineage continued. His marriage to Satyavati and Bhishma's extraordinary sacrifice became pivotal events that shaped the succession of the Kuru dynasty, ultimately laying the foundation for the events of the Mahabharata.",
     img: "https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Satyavati",
-    desc: "Satyavati, the daughter of the chieftain of fishermen, married King Shantanu under the condition that her offspring would inherit the throne of Hastinapura. She was the mother of Sage <em>Vyasa</em> (from a prior union with Sage Parashara), and princes Chitrangada and Vichitravirya. Her political wisdom kept the dynasty sustained during critical crises of inheritance.",
+    desc: "Satyavati, originally known as Matsyagandhā, was the daughter of a fisherman and later became the Queen of Hastinapura. Blessed by Sage Parāśara, her fish-like odor was transformed into a divine fragrance, and from their sacred union on an island in the Yamuna was born Sage Vyasa. She later married King Shantanu, becoming the stepmother of Bhishma and the mother of Chitrāngada and Vichitravirya. After the untimely deaths of her sons, Satyavati requested Vyasa to perform the ancient practice of niyoga, leading to the births of Dhritarashtra, Pandu, and Vidura. Through her wisdom, determination, and decisions, Satyavati became one of the most influential matriarchs of the Kuru dynasty, directly shaping the lineage and events that culminated in the Mahabharata.",
     img: "https://images.unsplash.com/photo-1519003722824-192514093139?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Ganga",
-    desc: "The river goddess Ganga descended to Earth in human description and married King Shantanu, giving birth to the great patriarch <em>Bhishma</em> (originally Devavrata). Divine, compassionate, and unwavering in her obligations, she raised Devavrata in celestial arts and returned him to his father as a perfect warrior-sage.",
+    desc: "Goddess Ganga is the divine personification of the sacred River Ganges and one of the most revered deities in Hindu tradition. She descended to Earth to fulfill a celestial purpose and married King Shantanu, becoming the mother of eight Vasus who had been cursed to take human birth. As promised, she liberated seven of them by immersing them in the river immediately after their birth, while the eighth child, Devavrata, survived and later became the legendary Bhishma. After raising Bhishma with exceptional knowledge of warfare, scriptures, and dharma, Ganga reunited him with Shantanu. Through her role as Bhishma's mother, Goddess Ganga became one of the most significant figures in the Mahabharata, as her son would go on to shape the destiny of the Kuru dynasty and play a central role in the Kurukshetra War.",
     img: "https://images.unsplash.com/photo-1561361513-2d000a534673?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Vyasa",
-    desc: "Sage Vyasa (Krishna Dvaipayana) is the revered seer who composed the grand epic <em>Mahabharata</em> and structured the four Vedas. He was born to <em>Satyavati</em> and Sage Parashara. Following dynastic crises, he fathered Dhritarashtra, Pandu, and Vidura through the spiritual ritual of Niyoga, linking him as the primary ancestor of the Kuru household.",
+    desc: "Sage Vyasa, also known as Krishna Dvaipayana Vyasa, was the son of Sage Parāśara and Satyavati and is revered as one of the greatest sages in Hindu tradition. He is credited with compiling the Vedas, authoring the Mahabharata, and composing numerous Puranas. Following the deaths of Vichitravirya and Chitrāngada, Vyasa performed niyoga at the request of his mother Satyavati, fathering Dhritarashtra, Pandu, and Vidura, thereby ensuring the continuation of the Kuru dynasty. As both the author of the Mahabharata and the grandfather of the Kauravas and Pandavas, Vyasa occupies a unique position within the epic. Through his wisdom, foresight, and guidance, he shaped many of the events leading to the Kurukshetra War and preserved them for future generations through the Mahabharata.",
     img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Chitrangada",
-    desc: "Chitrangada was the eldest son of King Shantanu and Queen Satyavati. Known for his immense valor and pride, he became the King of Hastinapura after Shantanu. He was tragically killed in a prolonged, fierce battle with a powerful Gandharva warrior who also shared the name Chitrangada.",
+    desc: "Chitrāngada was the elder son of King Shantanu and Queen Satyavati and became the King of Hastinapura after his father's death. A courageous and valiant ruler, he was entrusted with the responsibility of leading the Kuru kingdom. His reign, however, was short-lived when he challenged a Gandharva king of the same name to a fierce battle. After fighting for several years, Chitrāngada was slain, leaving no heir to the throne. His untimely death led to his younger brother Vichitravirya ascending the throne, setting in motion a chain of events that ultimately resulted in the birth of Dhritarashtra, Pandu, and Vidura. Though his role in the Mahabharata is brief, Chitrāngada's death became a crucial turning point in the succession of the Kuru dynasty.",
     img: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Vichitravirya",
-    desc: "Vichitravirya was the younger son of Shantanu and Satyavati, succeeding his brother Chitrangada to the throne. He married the Kashi princesses <em>Ambika</em> and <em>Ambalika</em>, won for him by Bhishma. Vichitravirya died early from illness without leaving any biological children to inherit the crown, bringing a lineage crisis.",
+    desc: "Vichitravirya was the younger son of King Shantanu and Queen Satyavati and became the King of Hastinapura after the death of his elder brother, Chitrāngada. As he was still young, the kingdom was governed under the guidance of his half-brother Bhishma. Bhishma later won the princesses Ambika and Ambalika from the Kingdom of Kashi for Vichitravirya's marriage. However, Vichitravirya died prematurely without leaving an heir, creating a succession crisis in the Kuru dynasty. To preserve the royal lineage, Satyavati summoned Sage Vyasa to perform niyoga with the widowed queens, resulting in the births of Dhritarashtra and Pandu, while Vidura was born through a maidservant. Though Vichitravirya himself played a limited role in the Mahabharata, his untimely death became one of the most significant events that shaped the future of the Kuru dynasty and ultimately led to the Kurukshetra War.",
     img: "https://images.unsplash.com/photo-1553913861-c0fddf2619ee?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Ambika",
-    desc: "Queen Ambika was the eldest princess of the King of Kashi and became the first wife of Vichitravirya. Following Vichitravirya's untimely death, she underwent the Niyoga ritual with Sage Vyasa. In her fear of the sage's ascetic appearance, she closed her eyes, causing her son <em>Dhritarashtra</em> to be born blind.",
+    desc: "Ambika was the eldest princess of the Kingdom of Kashi and became the queen of King Vichitravirya after being won by Bhishma at her swayamvara. Following Vichitravirya's untimely death without an heir, Satyavati requested Sage Vyasa to perform niyoga to preserve the Kuru lineage. Frightened by Vyasa's ascetic appearance, Ambika closed her eyes during their union, resulting in the birth of Dhritarashtra, who was born blind. As the mother of the eldest Kuru prince and the grandmother of the Kauravas, Ambika played a crucial role in the continuation of the Kuru dynasty. Though she remained away from political affairs, her actions during the niyoga profoundly influenced the succession of the throne and the events that eventually led to the Mahabharata.",
     img: "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=500&q=80"
   },
   {
     name: "Ambalika",
-    desc: "Queen Ambalika was the younger princess of Kasi and second wife of Vichitravirya. Following her husband's demise, she underwent the Niyoga ritual with Sage Vyasa. She turned pale with fright during the meeting, which caused her son <em>Pandu</em> to be born with a pale complexion, though highly capable.",
+    desc: "Ambalika was the younger princess of the Kingdom of Kashi and became the queen of King Vichitravirya after Bhishma won her at her swayamvara. Following Vichitravirya's untimely death without an heir, Sage Vyasa was invited by Satyavati to perform niyoga and preserve the Kuru lineage. Overwhelmed by Vyasa's austere appearance, Ambalika turned pale with fear during their union, resulting in the birth of Pandu, who was born with a pale complexion and physical frailty. As the mother of Pandu and the grandmother of the Pandavas, Ambalika became one of the key matriarchs of the Kuru dynasty. Through her son and grandsons, she played an indirect yet pivotal role in the lineage and events that ultimately culminated in the Mahabharata.",
     img: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=500&q=80"
   },
   {
