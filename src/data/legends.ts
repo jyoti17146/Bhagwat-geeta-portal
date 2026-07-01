@@ -198,7 +198,7 @@ export const mahabharatLegends: Legend[] = [
   },
   {
     name: "Parashara",
-    desc: "Sage Parashara was a highly powerful, legendary Vedic rishi, the grandson of Maharishi Vashistha, and the author of the Vishnu Purana. During his journeys, he met Satyavati (then Matsyagandha), and from their divine spiritual union on an island in the Yamuna, the master-sage <em>Vyasa</em> was born.",
+    desc: "Sage Parāśara was one of the greatest Vedic rishis, renowned for his immense spiritual wisdom, yogic powers, and mastery of the Vedas. He was the grandson of the revered sage Vashistha and is traditionally credited with composing the Vishnu Purana, one of the eighteen Mahāpurāṇas. He is also regarded as the author of the Brihat Parashara Hora Shastra, the foundational text of Vedic astrology. Parāśara holds a crucial place in the lineage of the Mahabharata. During his travels, he met Satyavati (then known as Matsyagandhā). Their divine spiritual union on an island in the Yamuna gave birth to Vyasa, the sage who later compiled the Vedas, composed the Mahabharata, and became one of the central figures responsible for preserving Hindu scriptures. Through Vyasa, Sage Parāśara became the grandfather of the Kuru dynasty's next generation, making him one of the most significant ancestral figures connected to the events of the Mahabharata."
     img: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=500&q=80"
   }
 ];
