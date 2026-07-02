@@ -171,22 +171,21 @@ export const LanguageSelector: React.FC = () => {
         <ChevronDown className={`w-3 h-3 text-stone-400 dark:text-amber-500/70 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
-      {/* Elegant Languages Grid Drawer */}
       {isOpen && (
-        <div 
-          id="custom-languages-dropdown-drawer"
-          className="absolute right-0 mt-2.5 w-[280px] sm:w-[320px] bg-white dark:bg-[#1a0f0a] border border-[#deb887]/40 dark:border-amber-700/60 rounded-2xl shadow-xl z-[99999] overflow-hidden backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-200"
-        >
-          {/* Header */}
-          <div className="p-3 bg-stone-50 dark:bg-[#25160e] border-b border-[#deb887]/20 flex items-center justify-between">
-            <span className="font-serif font-bold text-[#8b4513] dark:text-amber-450 text-[11px] tracking-widest uppercase">TRANSLATE PORTAL</span>
-            {!isTranslateReady && (
-              <span className="text-[9px] text-[#8b4513]/70 dark:text-amber-500/60 italic animate-pulse">Initializing engines...</span>
-            )}
-          </div>
+  <div 
+    id="custom-languages-dropdown-drawer"
+    className="absolute right-0 mt-2.5 w-[280px] sm:w-[320px] max-h-[75vh] flex flex-col bg-white dark:bg-[#1a0f0a] border border-[#deb887]/40 dark:border-amber-700/60 rounded-2xl shadow-xl z-[99999] overflow-hidden backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-200"
+  >
+    {/* Header */}
+    <div className="p-3 bg-stone-50 dark:bg-[#25160e] border-b border-[#deb887]/20 flex items-center justify-between shrink-0">
+      <span className="font-serif font-bold text-[#8b4513] dark:text-amber-450 text-[11px] tracking-widest uppercase">TRANSLATE PORTAL</span>
+      {!isTranslateReady && (
+        <span className="text-[9px] text-[#8b4513]/70 dark:text-amber-500/60 italic animate-pulse">Initializing engines...</span>
+      )}
+    </div>
 
-          {/* Languages Grid */}
-          <div className="grid grid-cols-2 gap-1 p-2 max-h-[320px] overflow-y-auto">
+    {/* Languages Grid */}
+    <div className="grid grid-cols-2 gap-1 p-2 overflow-y-auto min-h-0">
             {LANGUAGES.map((lang) => {
               const isSelected = lang.code === activeLang;
               return (
@@ -213,9 +212,9 @@ export const LanguageSelector: React.FC = () => {
           </div>
 
           {/* Footer disclaimer */}
-          <div className="p-2.5 bg-stone-50 dark:bg-[#25160e]/50 border-t border-[#deb887]/15 text-[9px] text-center text-stone-400 dark:text-stone-500 leading-normal">
-            Translations powered dynamically via Google neural cloud system
-          </div>
+           <div className="p-2.5 bg-stone-50 dark:bg-[#25160e]/50 border-t border-[#deb887]/15 text-[9px] text-center text-stone-400 dark:text-stone-500 leading-normal shrink-0">
+                Translations powered dynamically via Google neural cloud system
+         </div>
         </div>
       )}
     </div>
